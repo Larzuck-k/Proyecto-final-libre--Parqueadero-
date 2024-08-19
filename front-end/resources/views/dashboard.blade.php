@@ -21,7 +21,7 @@
     <link rel="stylesheet" href="assets/vendors/font-awesome/css/font-awesome.min.css" />
     <link rel="stylesheet" href="assets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.css">
 
-    
+
     <!-- End layout styles -->
 
 
@@ -31,28 +31,28 @@
 
 
 
-        <!-- partial -->
-        <div class="container-fluid page-body-wrapper">
-            <x-navbar />
-            <x-sidebar />
+    <!-- partial -->
+        <x-navbar />
+    <div class="container-fluid page-body-wrapper">
+       
+        <x-sidebar />
+     
+        <x-content />
+
+    </div>
 
 
-            <x-content />
 
-        </div>
+    <!-- Load scripts from resources/js -->
 
+    <script src="assets/vendors/js/vendor.bundle.base.js"></script>
 
+    <script src="assets/vendors/chart.js/chart.umd.js"></script>
+    <script src="assets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
 
-        <!-- Load scripts from resources/js -->
-
-        <script src="assets/vendors/js/vendor.bundle.base.js"></script>
-
-        <script src="assets/vendors/chart.js/chart.umd.js"></script>
-        <script src="assets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
-
-        @foreach(File::files(public_path('js')) as $file)
-        <script src="{{ asset('js/' . $file->getFilename()) }}"></script>
-        @endforeach
+    @foreach(File::files(public_path('js')) as $file)
+    <script src="{{ asset('js/' . $file->getFilename()) }}"></script>
+    @endforeach
 
 </body>
 
