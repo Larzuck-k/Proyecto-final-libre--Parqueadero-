@@ -26,6 +26,35 @@ export const crearContratista = async (req, res) => {
     }
 };
 
+export const cambiarEstado = async (req, res) => {
+    try {
+      const { id } = req.body;
+      const contratista = await Contratista.findByPk(id);
+  
+      if (contratista) {
+        const estadoActual = contratista.Estado;
+        const nuevoEstado = estadoActual === 0 ? 1 : 0;
+        contratista.Estado = nuevoEstado;
+        await contratista.save();
+        res.status(200).send({
+          status: "success",
+          mensaje: "Se ha actualizado el actualizado exitosamente"
+        });
+      } else {
+        res.status(404).send({
+          status: "error",
+          mensaje: "Registro no encontrado"
+        });
+      }
+    } catch (error) {
+      res.status(400).send({
+        status: "error",
+        mensaje: "Error al cambiar el estado: " + error
+      });
+    }
+  };
+
+
 // Obtener todos los contratistas
 export const obtenerContratistas = async (req, res) => {
     try {

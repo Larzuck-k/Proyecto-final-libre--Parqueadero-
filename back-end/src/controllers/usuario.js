@@ -26,6 +26,35 @@ export const crearUsuario = async (req, res) => {
     }
 };
 
+export const cambiarEstado = async (req, res) => {
+    try {
+      const { id } = req.body;
+      const usuario = await Usuario.findByPk(id);
+  
+      if (usuario) {
+        const estadoActual = usuario.Estado;
+        const nuevoEstado = estadoActual === 0 ? 1 : 0;
+        usuario.Estado = nuevoEstado;
+        await usuario.save(); 
+        res.status(200).send({
+          status: "success",
+          mensaje: "Se ha actualizado el actualizado exitosamente"
+        });
+      } else {
+        res.status(404).send({
+          status: "error",
+          mensaje: "Registro no encontrado"
+        });
+      }
+    } catch (error) {
+      res.status(400).send({
+        status: "error",
+        mensaje: "Error al cambiar el estado: " + error
+      });
+    }
+  };
+
+
 // Obtener todos los usuarios
 export const obtenerUsuarios = async (req, res) => {
     try {

@@ -25,6 +25,35 @@ export const crearReserva = async (req, res) => {
     }
 };
 
+export const cambiarEstado = async (req, res) => {
+    try {
+      const { id } = req.body;
+      const reserva = await Reserva.findByPk(id);
+  
+      if (reserva) {
+        const estadoActual = reserva.Estado;
+        const nuevoEstado = estadoActual === 0 ? 1 : 0;
+        reserva.Estado = nuevoEstado;
+        await reserva.save();
+        res.status(200).send({
+          status: "success",
+          mensaje: "Se ha actualizado el actualizado exitosamente"
+        });
+      } else {
+        res.status(404).send({
+          status: "error",
+          mensaje: "Registro no encontrado"
+        });
+      }
+    } catch (error) {
+      res.status(400).send({
+        status: "error",
+        mensaje: "Error al cambiar el estado: " + error
+      });
+    }
+  };
+
+
 // Obtener todas las reservas
 export const obtenerReservas = async (req, res) => {
     try {

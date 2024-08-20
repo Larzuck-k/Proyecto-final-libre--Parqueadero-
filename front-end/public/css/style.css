@@ -11437,8 +11437,8 @@ textarea.is-invalid.tt-hint, .select2-container--default .select2-selection--sin
   --bs-btn-bg: #12E4F3;
   --bs-btn-border-color: #12E4F3;
   --bs-btn-hover-color: #000;
-  --bs-btn-hover-bg: #c183ff;
-  --bs-btn-hover-border-color: #bd7cff;
+  --bs-btn-hover-bg: #001d39;
+  --bs-btn-hover-border-color: #001c2a;
   --bs-btn-focus-shadow-rgb: 155, 93, 217;
   --bs-btn-active-color: #000;
   --bs-btn-active-bg: #c58aff;
@@ -22590,7 +22590,7 @@ code {
   transition: opacity 0.3s ease;
 }
 .btn-gradient-primary:not([disabled]):not(.disabled):active, .btn-gradient-primary:not([disabled]):not(.disabled).active, .show > .btn-gradient-primary.dropdown-toggle {
-  background: linear-gradient(to right, #da8cff, #9a55ff);
+  background: linear-gradient(to right, #011725, #011725);
 }
 .btn-gradient-primary:hover {
   opacity: 0.8;

@@ -22,6 +22,35 @@ export const crearParqueadero = async (req, res) => {
     }
 };
 
+export const cambiarEstado = async (req, res) => {
+    try {
+      const { id } = req.body;
+      const parqueadero = await Parqueadero.findByPk(id);
+  
+      if (parqueadero) {
+        const estadoActual = parqueadero.Estado;
+        const nuevoEstado = estadoActual === 0 ? 1 : 0;
+        parqueadero.Estado = nuevoEstado;
+        await parqueadero.save();
+        res.status(200).send({
+          status: "success",
+          mensaje: "Se ha actualizado el actualizado exitosamente"
+        });
+      } else {
+        res.status(404).send({
+          status: "error",
+          mensaje: "Registro no encontrado"
+        });
+      }
+    } catch (error) {
+      res.status(400).send({
+        status: "error",
+        mensaje: "Error al cambiar el estado: " + error
+      });
+    }
+  };
+
+
 // Obtener todos los parqueaderos
 export const obtenerParqueaderos = async (req, res) => {
     try {

@@ -38,6 +38,35 @@ export const obtenerEspacios = async (req, res) => {
     }
 };
 
+export const cambiarEstado = async (req, res) => {
+    try {
+      const { id } = req.body;
+      const espacio = await Espacio.findByPk(id);
+  
+      if (espacio) {
+        const estadoActual = espacio.Estado;
+        const nuevoEstado = estadoActual === 0 ? 1 : 0;
+        espacio.Estado = nuevoEstado;
+        await espacio.save();
+        res.status(200).send({
+          status: "success",
+          mensaje: "Se ha actualizado el actualizado exitosamente"
+        });
+      } else {
+        res.status(404).send({
+          status: "error",
+          mensaje: "Registro no encontrado"
+        });
+      }
+    } catch (error) {
+      res.status(400).send({
+        status: "error",
+        mensaje: "Error al cambiar el estado: " + error
+      });
+    }
+  };
+
+
 // Actualizar un espacio
 export const actualizarEspacio = async (req, res) => {
     try {

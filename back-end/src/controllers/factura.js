@@ -25,6 +25,35 @@ export const crearFactura = async (req, res) => {
     }
 };
 
+export const cambiarEstado = async (req, res) => {
+    try {
+      const { id } = req.body;
+      const factura = await Factura.findByPk(id);
+  
+      if (factura) {
+        const estadoActual = factura.Estado;
+        const nuevoEstado = estadoActual === 0 ? 1 : 0;
+        factura.Estado = nuevoEstado;
+        await factura.save();
+        res.status(200).send({
+          status: "success",
+          mensaje: "Se ha actualizado el actualizado exitosamente"
+        });
+      } else {
+        res.status(404).send({
+          status: "error",
+          mensaje: "Registro no encontrado"
+        });
+      }
+    } catch (error) {
+      res.status(400).send({
+        status: "error",
+        mensaje: "Error al cambiar el estado: " + error
+      });
+    }
+  };
+
+
 // Obtener todas las facturas
 export const obtenerFacturas = async (req, res) => {
     try {

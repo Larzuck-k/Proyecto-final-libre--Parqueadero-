@@ -1,7 +1,7 @@
 <?php
 // URL de la API
-$apiUrl = 'http://localhost:3000/cliente/obtener'; // Reemplaza con la URL de tu API
-$updateUrl = 'http://localhost:3000/cliente/editar'; // Reemplaza con la URL de tu API para actualizar
+$apiUrl = 'http://localhost:3100/usuario/obtener'; // Reemplaza con la URL de tu API
+$updateUrl = 'http://localhost:3100/usuario/estado'; // Reemplaza con la URL de tu API para actualizar
 
 // Obtener los datos de la API
 $response = file_get_contents($apiUrl);
@@ -47,18 +47,10 @@ foreach ($data as $row) {
             // Añadir formularios de activar/desactivar en la columna de acciones
             $id = htmlspecialchars($row['ID']); // Asumiendo que tienes un campo 'id' para identificar cada registro
             $status = htmlspecialchars($row['Estado']); // Asumiendo que tienes un campo 'status' para el estado del registro
-            
+
             $actionForm = $status == 1
-                ? "<form action='$updateUrl' method='PUT' style='display:inline;'>
-                      <input type='hidden' name='id' value='$id'>
-                      <input type='hidden' name='status' value='0'>
-                      <button type='submit' class='btn btn-danger'>Desactivar</button>
-                  </form>"
-                : "<form action='$updateUrl' method='PUT' style='display:inline;'>
-                      <input type='hidden' name='id' value='$id'>
-                      <input type='hidden' name='status' value='1'>
-                      <button type='submit' class='btn btn-success'>Activar</button>
-                  </form>";
+                ? "<button class='btn btn-danger' onclick='updateStatus($id, 0)'>Desactivar</button>"
+                : "<button class='btn btn-success' onclick='updateStatus($id, 1)'>Activar</button>";
 
             echo "<td>$actionForm</td>";
         } else {
@@ -71,44 +63,33 @@ echo '</tbody>';
 echo '</table>';
 ?>
 
-<?php
-// Este código PHP debe estar en un archivo separado que maneje la actualización del estado
-// Se debe incluir el siguiente código para manejar la solicitud POST
+<script>
+    function updateStatus(id, status) {
+        var updateUrl = '<?php echo $updateUrl; ?>';
+        var data = {
+            id: id,
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $id = $_POST['id'];
-    $status = $_POST['status'];
+        };
 
-    // Validar los datos recibidos
-    if (empty($id) || !in_array($status, [0, 1])) {
-        die('Datos inválidos');
+        fetch(updateUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+
+                if (data.status === 'success') {
+                    location.reload();
+                } else {
+                    alert(data.mensaje); // Display the error message from the API response
+                }
+
+            })
+            .catch(error => {
+                alert('Error al actualizar el estado');
+            });
     }
-
-    // Preparar los datos para la solicitud PUT
-    $updateData = [
-        'id' => $id,
-        'status' => $status
-    ];
-
-    // Hacer la solicitud PUT a la API
-    $ch = curl_init($updateUrl);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
-    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($updateData));
-    curl_setopt($ch, CURLOPT_HTTPHEADER, [
-        'Content-Type: application/json',
-        'Accept: application/json',
-    ]);
-    $response = curl_exec($ch);
-    curl_close($ch);
-
-    // Verificar la respuesta
-    $responseData = json_decode($response, true);
-    if (isset($responseData['success']) && $responseData['success']) {
-        header('Location: ' . $_SERVER['PHP_SELF']); // Redirigir para actualizar la tabla
-        exit;
-    } else {
-        die('Error al actualizar el estado');
-    }
-}
-?>
+</script>
