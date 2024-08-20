@@ -1,18 +1,12 @@
 {
-"source":{
+  "source": {
+    "include": ["./src"],
+    "includePattern": ".+\\.js(doc|x)?$",
+    "exclude": "node_modules/|docs"
+  },
 
-"include":["./src"],
-"includePattern":".+\\.js(doc|x)?$",
-"exclude":"node_modules/|docs"
-
-
-},
-
-"plugin":[],
-"opts":{
-
-    "destination":"docs/"
+  "plugin": [],
+  "opts": {
+    "destination": "docs/"
+  }
 }
-
-}
-

@@ -3,7 +3,7 @@ import db from "./db.js";
 import Usuario from "./usuario.js";
 
 export default  db.define("Contratista", {
-  ID_Contratista: {
+  ID: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
     primaryKey: true,
@@ -30,9 +30,14 @@ export default  db.define("Contratista", {
     type: DataTypes.INTEGER,
     references: {
       model: Usuario,
-      key: 'ID_Usuario',
+      key: 'ID',
     },
+  
   },
+  Estado: {
+    type: DataTypes.INTEGER,
+    defaultValue: 1
+  }
 }, {
   tableName: 'Contratista',
   timestamps: false,

@@ -4,7 +4,7 @@ import Contratista from "./contratista.js";
 import Espacio from "./espacio.js";
 
 export default db.define("Contrato", {
-  ID_Contrato: {
+  ID: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
     primaryKey: true,
@@ -25,16 +25,21 @@ export default db.define("Contrato", {
     type: DataTypes.INTEGER,
     references: {
       model: Contratista,
-      key: 'ID_Contratista',
+      key: 'ID',
     },
   },
   ID_Espacio: {
     type: DataTypes.INTEGER,
     references: {
       model: Espacio,
-      key: 'ID_Espacio',
+      key: 'ID',
     },
+    
   },
+  Estado: {
+    type: DataTypes.INTEGER,
+    defaultValue: 1
+  }
 }, {
   tableName: 'Contrato',
   timestamps: false,

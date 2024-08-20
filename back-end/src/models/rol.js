@@ -2,7 +2,7 @@ import { DataTypes } from "sequelize";
 import db from "./db.js";
 
 export default  db.define("Rol", {
-  ID_Rol: {
+  ID: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
     primaryKey: true,

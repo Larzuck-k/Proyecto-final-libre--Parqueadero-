@@ -6,7 +6,7 @@ import Reserva from "./reserva.js";
 import Contrato from "./contrato.js";
 
 export default  db.define("Factura", {
-  ID_Factura: {
+  ID: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
     primaryKey: true,
@@ -23,30 +23,33 @@ export default  db.define("Factura", {
     type: DataTypes.INTEGER,
     references: {
       model: Cliente_Normal,
-      key: 'ID_Cliente',
+      key: 'ID',
     },
   },
   ID_Contratista: {
     type: DataTypes.INTEGER,
     references: {
       model: Contratista,
-      key: 'ID_Contratista',
+      key: 'ID',
     },
   },
   ID_Reserva: {
     type: DataTypes.INTEGER,
     references: {
       model: Reserva,
-      key: 'ID_Reserva',
+      key: 'ID',
     },
   },
   ID_Contrato: {
     type: DataTypes.INTEGER,
     references: {
       model: Contrato,
-      key: 'ID_Contrato',
+      key: 'ID',
     },
-  },
+  }, Estado: {
+    type: DataTypes.INTEGER,
+    defaultValue: 1
+  }
 }, {
   tableName: 'Factura',
   timestamps: false,

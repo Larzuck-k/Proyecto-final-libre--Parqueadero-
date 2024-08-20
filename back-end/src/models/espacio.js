@@ -3,7 +3,7 @@ import db from "./db.js";
 import Parqueadero from "./parqueadero.js";
 
 export default  db.define("Espacio", {
-  ID_Espacio: {
+  ID: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
     primaryKey: true,
@@ -28,9 +28,13 @@ export default  db.define("Espacio", {
     type: DataTypes.INTEGER,
     references: {
       model: Parqueadero,
-      key: 'ID_Parqueadero',
+      key: 'ID',
     },
   },
+  Estado: {
+    type: DataTypes.INTEGER,
+    defaultValue: 1
+  }
 }, {
   tableName: 'Espacio',
   timestamps: false,

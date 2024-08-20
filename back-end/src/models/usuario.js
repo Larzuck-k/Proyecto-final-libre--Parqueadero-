@@ -2,8 +2,8 @@ import { DataTypes } from "sequelize";
 import db from "./db.js";
 import Rol from "./rol.js";
 
-export default  db.define("Usuario", {
-  ID_Usuario: {
+export default db.define("Usuario", {
+  ID: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
     primaryKey: true,
@@ -25,9 +25,13 @@ export default  db.define("Usuario", {
     type: DataTypes.INTEGER,
     references: {
       model: Rol,
-      key: 'ID_Rol',
+      key: 'ID',
     },
   },
+  Estado: {
+    type: DataTypes.INTEGER,
+    defaultValue: 1
+  }
 }, {
   tableName: 'Usuario',
   timestamps: false,

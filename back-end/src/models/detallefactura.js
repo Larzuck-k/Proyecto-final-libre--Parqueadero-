@@ -4,7 +4,7 @@ import Factura from "./factura.js";
 import Espacio from "./espacio.js";
 
 export default db.define("DetalleFactura", {
-  ID_DetalleFactura: {
+  ID: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
     primaryKey: true,
@@ -13,7 +13,7 @@ export default db.define("DetalleFactura", {
     type: DataTypes.INTEGER,
     references: {
       model: Factura,
-      key: 'ID_Factura',
+      key: 'ID',
     },
     allowNull: false,
   },
@@ -21,7 +21,7 @@ export default db.define("DetalleFactura", {
     type: DataTypes.INTEGER,
     references: {
       model: Espacio,
-      key: 'ID_Espacio',
+      key: 'ID',
     },
     allowNull: false,
   },

@@ -4,7 +4,7 @@ import Cliente_Normal from "./cliente_normal.js";
 import Espacio from "./espacio.js";
 
 export default  db.define("Reserva", {
-  ID_Reserva: {
+  ID: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
     primaryKey: true,
@@ -25,16 +25,19 @@ export default  db.define("Reserva", {
     type: DataTypes.INTEGER,
     references: {
       model: Cliente_Normal,
-      key: 'ID_Cliente',
+      key: 'ID',
     },
   },
   ID_Espacio: {
     type: DataTypes.INTEGER,
     references: {
       model: Espacio,
-      key: 'ID_Espacio',
+      key: 'ID',
     },
-  },
+  }, Estado: {
+    type: DataTypes.INTEGER,
+    defaultValue: 1
+  }
 }, {
   tableName: 'Reserva',
   timestamps: false,
