@@ -1,61 +1,58 @@
 <nav class="sidebar sidebar-offcanvas" id="sidebar">
           <ul class="nav">
         
-            <li class="nav-item">
-              <a class="nav-link" href="index.html">
-                <span class="menu-title">Dashboard</span>
-                <i class="mdi mdi-home menu-icon"></i>
-              </a>
-            </li>
+          <li class="nav-item">
+    <a class="nav-link" href="#">
+        <x-menu /> <!-- Llama al componente 'menu.blade.php' -->
+        <span class="menu-title">Menú principal</span>
+        <i class="mdi mdi-home menu-icon"></i>
+    </a>
+</li>
+
+
             <li class="nav-item">
               <a class="nav-link" data-bs-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
-                <span class="menu-title">Basic UI Elements</span>
+                <span class="menu-title">Tablas</span>
                 <i class="menu-arrow"></i>
-                <i class="mdi mdi-crosshairs-gps menu-icon"></i>
+                <i class="mdi mdi-table-large menu-icon"></i>
               </a>
               <div class="collapse" id="ui-basic">
-                <ul class="nav flex-column sub-menu">
-                  <li class="nav-item">
-                    <a class="nav-link" href="pages/ui-features/buttons.html">Buttons</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="pages/ui-features/dropdowns.html">Dropdowns</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="pages/ui-features/typography.html">Typography</a>
-                  </li>
-                </ul>
+              <ul class="nav flex-column sub-menu">
+    <li class="nav-item">
+        <a class="nav-link" href="/?api_url=http://localhost:3300/usuario/obtener">Usuarios</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/?api_url=http://localhost:3300/contratista/obtener">Contratistas</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/?api_url=http://localhost:3300/cliente/obtener">Clientes</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/?api_url=http://localhost:3300/contrato/obtener">Contratos</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/?api_url=http://localhost:3300/factura/obtener">Facturas</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/?api_url=http://localhost:3300/parqueadero/obtener">Parqueaderos</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/?api_url=http://localhost:3300/reserva/obtener">Reservas</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/?api_url=http://localhost:3300/usuario/obtener">Usuarios</a>
+    </li>
+    <!-- Más enlaces -->
+</ul>
+
+
               </div>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" data-bs-toggle="collapse" href="#icons" aria-expanded="false" aria-controls="icons">
-                <span class="menu-title">Icons</span>
-                <i class="mdi mdi-contacts menu-icon"></i>
-              </a>
-              <div class="collapse" id="icons">
-                <ul class="nav flex-column sub-menu">
-                  <li class="nav-item">
-                    <a class="nav-link" href="pages/icons/font-awesome.html">Font Awesome</a>
-                  </li>
-                </ul>
-              </div>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" data-bs-toggle="collapse" href="#forms" aria-expanded="false" aria-controls="forms">
-                <span class="menu-title">Forms</span>
-                <i class="mdi mdi-format-list-bulleted menu-icon"></i>
-              </a>
-              <div class="collapse" id="forms">
-                <ul class="nav flex-column sub-menu">
-                  <li class="nav-item">
-                    <a class="nav-link" href="pages/forms/basic_elements.html">Form Elements</a>
-                  </li>
-                </ul>
-              </div>
-            </li>
+            
+            
             <li class="nav-item">
               <a class="nav-link" data-bs-toggle="collapse" href="#charts" aria-expanded="false" aria-controls="charts">
-                <span class="menu-title">Charts</span>
+                <span class="menu-title">Informes</span>
                 <i class="mdi mdi-chart-bar menu-icon"></i>
               </a>
               <div class="collapse" id="charts">
@@ -66,50 +63,6 @@
                 </ul>
               </div>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" data-bs-toggle="collapse" href="#tables" aria-expanded="false" aria-controls="tables">
-                <span class="menu-title">Tables</span>
-                <i class="mdi mdi-table-large menu-icon"></i>
-              </a>
-              <div class="collapse" id="tables">
-                <ul class="nav flex-column sub-menu">
-                  <li class="nav-item">
-                    <a class="nav-link" href="pages/tables/basic-table.html">Basic table</a>
-                  </li>
-                </ul>
-              </div>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" data-bs-toggle="collapse" href="#auth" aria-expanded="false" aria-controls="auth">
-                <span class="menu-title">User Pages</span>
-                <i class="menu-arrow"></i>
-                <i class="mdi mdi-lock menu-icon"></i>
-              </a>
-              <div class="collapse" id="auth">
-                <ul class="nav flex-column sub-menu">
-                  <li class="nav-item">
-                    <a class="nav-link" href="pages/samples/blank-page.html"> Blank Page </a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="pages/samples/login.html"> Login </a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="pages/samples/register.html"> Register </a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="pages/samples/error-404.html"> 404 </a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="pages/samples/error-500.html"> 500 </a>
-                  </li>
-                </ul>
-              </div>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="docs/documentation.html" target="_blank">
-                <span class="menu-title">Documentation</span>
-                <i class="mdi mdi-file-document-box menu-icon"></i>
-              </a>
-            </li>
+           
           </ul>
         </nav>
