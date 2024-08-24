@@ -9,6 +9,9 @@ Route::get('/login', function () {
 Route::get('/register', function () {
     return view('register');
 });
+Route::get('/databases', function () {
+    return view('databases');
+});
 Route::get('/table', function () {
     return view('table');
 });

@@ -2,7 +2,7 @@
           <ul class="nav">
         
           <li class="nav-item">
-    <a class="nav-link" href="#">
+    <a class="nav-link" href="/">
         <x-menu /> <!-- Llama al componente 'menu.blade.php' -->
         <span class="menu-title">Menú principal</span>
         <i class="mdi mdi-home menu-icon"></i>
@@ -19,28 +19,28 @@
               <div class="collapse" id="ui-basic">
               <ul class="nav flex-column sub-menu">
     <li class="nav-item">
-        <a class="nav-link" href="/?api_url=http://localhost:3300/usuario/obtener">Usuarios</a>
+        <a class="nav-link" href="/databases/?api_url={{ env('API_URL') }}/usuario/obtener">Usuarios</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="/?api_url=http://localhost:3300/contratista/obtener">Contratistas</a>
+        <a class="nav-link" href="/databases/?api_url={{ env('API_URL') }}/contratista/obtener">Contratistas</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="/?api_url=http://localhost:3300/cliente/obtener">Clientes</a>
+        <a class="nav-link" href="/databases/?api_url={{ env('API_URL') }}/cliente/obtener">Clientes</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="/?api_url=http://localhost:3300/contrato/obtener">Contratos</a>
+        <a class="nav-link" href="/databases/?api_url={{ env('API_URL') }}/contrato/obtener">Contratos</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="/?api_url=http://localhost:3300/factura/obtener">Facturas</a>
+        <a class="nav-link" href="/databases/?api_url={{ env('API_URL') }}/factura/obtener">Facturas</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="/?api_url=http://localhost:3300/parqueadero/obtener">Parqueaderos</a>
+        <a class="nav-link" href="/databases/?api_url={{ env('API_URL') }}/parqueadero/obtener">Parqueaderos</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="/?api_url=http://localhost:3300/reserva/obtener">Reservas</a>
+        <a class="nav-link" href="/databases/?api_url={{ env('API_URL') }}/reserva/obtener">Reservas</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="/?api_url=http://localhost:3300/usuario/obtener">Usuarios</a>
+        <a class="nav-link" href="/databases/?api_url={{ env('API_URL') }}/usuario/obtener">Usuarios</a>
     </li>
     <!-- Más enlaces -->
 </ul>
