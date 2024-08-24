@@ -71,9 +71,9 @@ export const obtenerUsuarios = async (req, res) => {
 // Actualizar un usuario
 export const actualizarUsuario = async (req, res) => {
     try {
-        const { id } = req.params;
+        const { ID } = req.body;
         const { Nombre, Email, Contraseña, ID_Rol } = req.body;
-        const usuario = await Usuario.findByPk(id);
+        const usuario = await Usuario.findByPk(ID);
 
         if (usuario) {
             if (Contraseña) {

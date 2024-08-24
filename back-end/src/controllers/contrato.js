@@ -27,8 +27,8 @@ export const crearContrato = async (req, res) => {
 
 export const cambiarEstado = async (req, res) => {
     try {
-      const { id } = req.body;
-      const contrato = await Contrato.findByPk(id);
+      const { ID } = req.body;
+      const contrato = await Contrato.findByPk(ID);
   
       if (contrato) {
         const estadoActual = contrato.Estado;

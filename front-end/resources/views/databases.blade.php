@@ -24,7 +24,7 @@
     <link rel="stylesheet" href="/assets/vendors/font-awesome/css/font-awesome.min.css" />
     <link rel="stylesheet" href="/assets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.css">
     @foreach(File::files(public_path('css')) as $file)
-        <link rel="stylesheet" href="{{ asset('css/' . $file->getFilename()) }}">
+    <link rel="stylesheet" href="{{ asset('css/' . $file->getFilename()) }}">
     @endforeach
 
 
@@ -154,7 +154,11 @@
 
         <div class="container-fluid page-body-wrapper ">
             <x-sidebar />
-          <div>  <x-table /></div>
+            <div class="p-3 table-container table-responsive text-center">
+                <x-table />
+                
+            </div>
+
         </div>
     </div>
 
@@ -167,7 +171,7 @@
     <script src="/assets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
 
     @foreach(File::files(public_path('js')) as $file)
-        <script src="{{ asset('js/' . $file->getFilename()) }}"></script>
+    <script src="{{ asset('js/' . $file->getFilename()) }}"></script>
     @endforeach
 
 

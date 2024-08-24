@@ -40,8 +40,8 @@ export const obtenerEspacios = async (req, res) => {
 
 export const cambiarEstado = async (req, res) => {
     try {
-      const { id } = req.body;
-      const espacio = await Espacio.findByPk(id);
+      const { ID } = req.body;
+      const espacio = await Espacio.findByPk(ID);
   
       if (espacio) {
         const estadoActual = espacio.Estado;

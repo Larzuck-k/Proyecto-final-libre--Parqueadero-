@@ -19,28 +19,29 @@
               <div class="collapse" id="ui-basic">
               <ul class="nav flex-column sub-menu">
     <li class="nav-item">
-        <a class="nav-link" href="/databases/?api_url={{ env('API_URL') }}/usuario/obtener">Usuarios</a>
+        <a class="nav-link" href="/databases/?api_url={{ env('API_URL') }}/usuario/obtener&title=Usuarios">Usuarios</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="/databases/?api_url={{ env('API_URL') }}/contratista/obtener">Contratistas</a>
+        <a class="nav-link" href="/databases/?api_url={{ env('API_URL') }}/contratista/obtener&title=Contratistas">Contratistas</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="/databases/?api_url={{ env('API_URL') }}/cliente/obtener">Clientes</a>
+        <a class="nav-link" href="/databases/?api_url={{ env('API_URL') }}/cliente/obtener&title=Clientes">Clientes</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="/databases/?api_url={{ env('API_URL') }}/contrato/obtener">Contratos</a>
+        <a class="nav-link" href="/databases/?api_url={{ env('API_URL') }}/contrato/obtener&title=Contratos">Contratos</a>
+    </li>
+    
+    <li class="nav-item">
+        <a class="nav-link" href="/databases/?api_url={{ env('API_URL') }}/factura/obtener&title=Facturas">Facturas</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="/databases/?api_url={{ env('API_URL') }}/factura/obtener">Facturas</a>
+        <a class="nav-link" href="/databases/?api_url={{ env('API_URL') }}/parqueadero/obtener&title=Parqueaderos">Parqueaderos</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="/databases/?api_url={{ env('API_URL') }}/parqueadero/obtener">Parqueaderos</a>
+        <a class="nav-link" href="/databases/?api_url={{ env('API_URL') }}/reserva/obtener&title=Reservas">Reservas</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="/databases/?api_url={{ env('API_URL') }}/reserva/obtener">Reservas</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="/databases/?api_url={{ env('API_URL') }}/usuario/obtener">Usuarios</a>
+        <a class="nav-link" href="/databases/?api_url={{ env('API_URL') }}/rol/obtener&title=Roles">Roles</a>
     </li>
     <!-- Más enlaces -->
 </ul>

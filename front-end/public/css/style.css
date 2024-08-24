@@ -10529,7 +10529,7 @@ progress {
 .form-control:disabled, .typeahead:disabled,
 .tt-query:disabled,
 .tt-hint:disabled, .select2-container--default .select2-selection--single .select2-search__field:disabled, .select2-container--default .select2-selection--single:disabled {
-  background-color: var(--bs-secondary-bg);
+  background-color: #bbbbbb;
   opacity: 1;
 }
 .form-control::file-selector-button, .typeahead::file-selector-button,
@@ -26005,6 +26005,36 @@ dl li {
     text-align: left;
     width: 66%;
   }
+}
+.table-responsive {
+  overflow-x: auto;
+  width: 100%;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 10px;
+  border: 1px solid #ddd;
+}
+
+/* Optional: Add a scrollbar to the table container */
+.table-responsive::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+  background-color: #001d39;
+  border-radius: 10px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+  background-color: #12e4f3;
+  border-radius: 10px;
 }
 
 @media (min-width: 992px) {

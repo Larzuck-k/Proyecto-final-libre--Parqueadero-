@@ -1,10 +1,11 @@
 <?php
 // URL de la API
 $apiUrl = $_GET["api_url"]; // Reemplaza con la URL de tu API
+$title = $_GET["title"]; // Reemplaza con la URL de tu API
 
-$updateUrl = str_replace( "obtener", "estado",$apiUrl); // Reemplaza con la URL de tu API para actualizar
+$updateUrl = str_replace("obtener", "estado", $apiUrl); // Reemplaza con la URL de tu API para actualizar
 
-echo $updateUrl;
+
 // Obtener los datos de la API
 $response = file_get_contents($apiUrl);
 
@@ -34,9 +35,12 @@ if (empty($data)) {
 
     // Añadir una columna de acciones
     $headers[] = 'Acciones';
+    echo '<p></p>';
+    echo '<span class="display-3 fw-bold">' . $title . '</span>';
+    echo '<p></p>';
 
     // Generar la tabla HTML
-    echo '<table border="1" class="table table-striped" cellpadding="5" cellspacing="0">';
+    echo '<table border="1" class=" table-responsive table table-striped " cellpadding="5" cellspacing="0">';
     echo '<thead>';
     echo '<tr>';
     foreach ($headers as $header) {
@@ -62,7 +66,12 @@ if (empty($data)) {
 
                 echo "<td>$actionForm $editButton</td>";
             } else {
-                echo "<td>" . htmlspecialchars($row[$header]) . "</td>";
+
+                if ($header === 'Contraseña') {
+                    echo "<td>*****</td>";
+                } else {
+                    echo "<td>" . htmlspecialchars($row[$header]) . "</td>";
+                }
             }
         }
         echo '</tr>';
@@ -82,10 +91,9 @@ if (empty($data)) {
     echo '<form id="editForm">';
     echo '</form>';
     echo '</div>';
-    echo '<div class="modal-footer">';
-    echo '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>';
-    echo '<button type="button" class="btn btn-primary" onclick="editRecord()">Guardar cambios</button>';
-    echo '</div>';
+
+    echo '<input type="hidden" value="" id="editthis"/>';
+
     echo '</div>';
     echo '</div>';
     echo '</div>';
@@ -126,6 +134,7 @@ if (empty($data)) {
 
         function showEditModal(id) {
             var row = document.querySelector(`tr[data-id="${id}"]`);
+            document.getElementById("editthis").value = id
             if (row === null) {
                 alert(`No se encontró la fila con id ${id}`);
                 return;
@@ -136,6 +145,10 @@ if (empty($data)) {
 
             // Crear los campos de edición dinámicamente
             var editForm = document.getElementById('editForm');
+            editForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                editRecord();
+            });
             editForm.innerHTML = '';
             var headers = <?php echo json_encode($headers); ?>;
             for (var i = 0; i < headers.length - 1; i++) {
@@ -144,10 +157,20 @@ if (empty($data)) {
                 var input = document.createElement('input');
                 input.type = 'text';
                 input.className = "form-control";
+                input.setAttribute("required", "");
 
-                input.name = columnName;
-                var value = row.children[i].textContent;
+                if (columnName == "ID") {
+                    input.setAttribute("disabled", "")
 
+                }
+                if (columnName == "Contraseña") {
+                    input.removeAttribute("required")
+                    input.name = columnName;
+                    var value = "";
+                } else {
+                    input.name = columnName;
+                    var value = row.children[i].textContent;
+                }
 
                 if (value.match(/^\d+$/)) {
                     input.value = row.children[i].textContent
@@ -162,12 +185,16 @@ if (empty($data)) {
                 if (value.includes("@")) {
                     input.value = row.children[i].textContent
                     input.type = 'email';
+                    input.pattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
                 }
 
 
                 if (value.includes("T") && value.includes(":") && value.includes("Z")) {
-                    input.value = row.children[i].textContent
-                    input.type = 'datetime';
+                    var date = new Date(value);
+                    var formattedDate = `${date.getFullYear()}-${padZero(date.getMonth() + 1)}-${padZero(date.getDate())}T${padZero(date.getHours())}:${padZero(date.getMinutes())}`;
+                    input.value = formattedDate;
+                    input.type = 'datetime-local';
                 }
 
                 title.innerText = columnName;
@@ -178,21 +205,47 @@ if (empty($data)) {
                 editForm.appendChild(document.createElement('br'));
             }
 
+            var modalFooter = document.createElement("div");
+            modalFooter.setAttribute("class", "modal-footer");
+
+            var submit = document.createElement("button");
+            submit.setAttribute("class", "btn btn-primary");
+            submit.setAttribute("type", "submit");
+            submit.innerText = "Guardar cambios";
+            modalFooter.appendChild(submit);
+
+            var close = document.createElement("a");
+            close.setAttribute("class", "btn btn-secondary ");
+            close.setAttribute("data-bs-dismiss", "modal");
+            close.innerText = "Cerrar";
+            modalFooter.appendChild(close);
+
+            editForm.appendChild(modalFooter);
+
+            editForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                editRecord();
+            });
+
+            editForm.appendChild(modalFooter);
             // Mostrar el modal
             $('#editModal').modal('show');
         }
 
         function editRecord() {
-            var id = document.querySelector(`tr[data-id="${id}"]`).dataset.id;
+            var id = document.getElementById("editthis").value
             var formData = {};
             var editForm = document.getElementById('editForm');
             var inputs = editForm.children;
             for (var i = 0; i < inputs.length; i++) {
                 var input = inputs[i];
-                formData[input.name] = input.value;
+                if (input.name !== "Contraseña" || input.value !== "") {
+                    formData[input.name] = input.value;
+                }
             }
 
-            var updateUrl = '<?php echo $updateUrl; ?>';
+            var updateUrl = '<?php echo str_replace("estado", "editar", $updateUrl); ?>';
+
             fetch(updateUrl, {
                     method: 'PUT',
                     headers: {
@@ -215,6 +268,28 @@ if (empty($data)) {
             // Ocultar el modal
             $('#editModal').modal('hide');
         }
+
+        function padZero(value) {
+            return (value < 10 ? '0' : '') + value;
+        }
+
+
+        var table = document.querySelector('table');
+
+// Find the column index of the "Estado" column
+var columnIndex = -1;
+Array.from(table.rows[0].cells).forEach(function(cell, index) {
+  if (cell.textContent.trim() === 'Estado') {
+    columnIndex = index;
+  }
+});
+
+// Hide the column
+if (columnIndex !== -1) {
+  table.querySelectorAll('tr').forEach(function(row) {
+    row.cells[columnIndex].style.display = 'none';
+  });
+}
     </script>
 <?php
 }

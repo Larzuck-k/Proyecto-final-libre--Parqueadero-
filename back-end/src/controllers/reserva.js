@@ -27,8 +27,8 @@ export const crearReserva = async (req, res) => {
 
 export const cambiarEstado = async (req, res) => {
     try {
-      const { id } = req.body;
-      const reserva = await Reserva.findByPk(id);
+      const { ID } = req.body;
+      const reserva = await Reserva.findByPk(ID);
   
       if (reserva) {
         const estadoActual = reserva.Estado;

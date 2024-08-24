@@ -71,9 +71,9 @@ export const obtenerContratistas = async (req, res) => {
 // Actualizar un contratista
 export const actualizarContratista = async (req, res) => {
     try {
-        const { id } = req.params;
+        const { ID } = req.body;
         const { Nombre, Email, Teléfono, Fecha_Inicio_Contrato, Fecha_Fin_Contrato, ID_Administrador } = req.body;
-        const contratista = await Contratista.findByPk(id);
+        const contratista = await Contratista.findByPk(ID);
 
         if (contratista) {
             contratista.Nombre = Nombre || contratista.Nombre;

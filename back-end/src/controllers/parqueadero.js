@@ -24,8 +24,8 @@ export const crearParqueadero = async (req, res) => {
 
 export const cambiarEstado = async (req, res) => {
     try {
-      const { id } = req.body;
-      const parqueadero = await Parqueadero.findByPk(id);
+      const { ID } = req.body;
+      const parqueadero = await Parqueadero.findByPk(ID);
   
       if (parqueadero) {
         const estadoActual = parqueadero.Estado;

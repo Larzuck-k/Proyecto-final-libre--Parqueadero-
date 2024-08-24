@@ -11,6 +11,10 @@ export default  db.define("Rol", {
     type: DataTypes.STRING(50),
     allowNull: false,
   },
+  Estado: {
+    type: DataTypes.INTEGER,
+    defaultValue: 1
+  }
 }, {
   tableName: 'Rol',
   timestamps: false,
