@@ -58,7 +58,13 @@ export const cambiarEstado = async (req, res) => {
 export const obtenerContratos = async (req, res) => {
     try {
         const contratos = await Contrato.findAll();
-        res.status(200).send(contratos);
+        if (contratos.length === 0) {
+            const columnNames = Object.keys(Contrato.getAttributes());
+            const emptyObject = columnNames.reduce((acc, curr) => ({ ...acc, [curr]: "" }), {});
+            res.status(200).send([emptyObject]);
+        } else {
+            res.status(200).send(contratos);
+        }
     } catch (error) {
         res.status(400).send({
             status: "error",

@@ -55,14 +55,20 @@ export const cambiarEstado = async (req, res) => {
 // Obtener todos los clientes normales
 export const obtenerClientesNormales = async (req, res) => {
   try {
-    const clientes = await ClienteNormal.findAll();
-    res.status(200).send(clientes);
-  } catch (error) {
+    const cliente = await ClienteNormal.findAll();
+    if (cliente.length === 0) {
+        const columnNames = Object.keys(ClienteNormal.getAttributes());
+        const emptyObject = columnNames.reduce((acc, curr) => ({ ...acc, [curr]: "" }), {});
+        res.status(200).send([emptyObject]);
+    } else {
+        res.status(200).send(cliente);
+    }
+} catch (error) {
     res.status(400).send({
-      status: "error",
-      mensaje: "Error al obtener los clientes: " + error,
+        status: "error",
+        mensaje: "Error al obtener los cliente: " + error
     });
-  }
+}
 };
 
 // Actualizar un cliente normal

@@ -39,6 +39,10 @@ if (empty($data)) {
     echo '<span class="display-3 fw-bold">' . $title . '</span>';
     echo '<p></p>';
 
+    echo '<button type="button" class="btn btn-primary " data-bs-toggle="modal" data-bs-target="#createModal">Crear Nuevo</button>';
+    echo '<p></p>';
+
+
     // Generar la tabla HTML
     echo '<table border="1" class=" table-responsive table table-striped " cellpadding="5" cellspacing="0">';
     echo '<thead>';
@@ -51,26 +55,40 @@ if (empty($data)) {
     echo '<tbody>';
     foreach ($data as $row) {
 
-        echo '<tr data-id="' . htmlspecialchars($row['ID']) . '">';
-        foreach ($headers as $header) {
-            if ($header === 'Acciones') {
-                // Añadir formularios de activar/desactivar y editar en la columna de acciones
-                $id = htmlspecialchars($row['ID']); // Asumiendo que tienes un campo 'id' para identificar cada registro
-                $status = htmlspecialchars($row['Estado']); // Asumiendo que tienes un campo 'status' para el estado del registro
 
-                $actionForm = $status == 1
-                    ? "<button class='btn btn-danger' onclick='updateStatus($id, 0)'>Desactivar</button>"
-                    : "<button class='btn btn-success' onclick='updateStatus($id, 1)'>Activar</button>";
 
-                $editButton = "<button class='btn btn-primary' onclick='showEditModal($id)'>Editar</button>";
 
-                echo "<td>$actionForm $editButton</td>";
-            } else {
 
-                if ($header === 'Contraseña') {
-                    echo "<td>*****</td>";
+        $isEmptyRow = true;
+        foreach ($row as $column => $value) {
+            if ($column !== 'ID' && !empty($value)) {
+                $isEmptyRow = false;
+                break;
+            }
+        }
+        if (!$isEmptyRow) {
+
+            echo '<tr data-id="' . htmlspecialchars($row['ID']) . '">';
+            foreach ($headers as $header) {
+                if ($header === 'Acciones') {
+                    // Añadir formularios de activar/desactivar y editar en la columna de acciones
+                    $id = htmlspecialchars($row['ID']); // Asumiendo que tienes un campo 'id' para identificar cada registro
+                    $status = htmlspecialchars($row['Estado']); // Asumiendo que tienes un campo 'status' para el estado del registro
+
+                    $actionForm = $status == 1
+                        ? "<button class='btn btn-danger' onclick='updateStatus($id, 0)'>Desactivar</button>"
+                        : "<button class='btn btn-success' onclick='updateStatus($id, 1)'>Activar</button>";
+
+                    $editButton = "<button class='btn btn-primary' onclick='showEditModal($id)'>Editar</button>";
+
+                    echo "<td>$actionForm $editButton</td>";
                 } else {
-                    echo "<td>" . htmlspecialchars($row[$header]) . "</td>";
+
+                    if ($header === 'Contraseña') {
+                        echo "<td>*****</td>";
+                    } else {
+                        echo "<td>" . htmlspecialchars($row[$header]) . "</td>";
+                    }
                 }
             }
         }
@@ -80,7 +98,7 @@ if (empty($data)) {
     echo '</table>';
 
 
-    echo '<div class="modal text-white"    id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">';
+    echo '<div class="modal text-white text-start"    id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">';
     echo '<div class="modal-dialog" role="document">';
     echo '<div class="modal-content bg-dark border-0">';
     echo '<div class="modal-header">';
@@ -98,6 +116,26 @@ if (empty($data)) {
     echo '</div>';
     echo '</div>';
 
+
+
+
+    // ... (rest of your code remains the same)
+
+    echo '<div class="modal text-white text-start" id="createModal" tabindex="-1" role="dialog" aria-labelledby="createModalLabel" aria-hidden="true">';
+    echo '<div class="modal-dialog" role="document">';
+    echo '<div class="modal-content bg-dark border-0">';
+    echo '<div class="modal-header">';
+    echo '<h5 class="modal-title" id="createModalLabel">Crear Nuevo Registro</h5>';
+
+    echo '</div>';
+    echo '<div class="modal-body">';
+    echo '<form id="createForm">';
+    echo '</form>';
+    echo '</div>';
+
+    echo '</div>';
+    echo '</div>';
+    echo '</div>';
 
 ?>
 
@@ -145,16 +183,13 @@ if (empty($data)) {
 
             // Crear los campos de edición dinámicamente
             var editForm = document.getElementById('editForm');
-            editForm.addEventListener('submit', function(event) {
-                event.preventDefault();
-                editRecord();
-            });
             editForm.innerHTML = '';
             var headers = <?php echo json_encode($headers); ?>;
             for (var i = 0; i < headers.length - 1; i++) {
-                var title = document.createElement("span")
-                title.setAttribute("class","text-start")
+                var title = document.createElement("label")
                 var columnName = headers[i];
+                title.setAttribute("for", columnName)
+                title.setAttribute("class", "m-2")
                 var input = document.createElement('input');
                 input.type = 'text';
                 input.className = "form-control rounded-3 ";
@@ -162,7 +197,6 @@ if (empty($data)) {
 
                 if (columnName == "ID") {
                     input.setAttribute("disabled", "")
-
                 }
                 if (columnName == "Contraseña") {
                     input.removeAttribute("required")
@@ -176,6 +210,7 @@ if (empty($data)) {
                 if (value.match(/^\d+$/)) {
                     input.value = row.children[i].textContent
                     input.type = 'number';
+                    input.min = 0;
                 }
 
                 if (value.match(/^[a-zA-Z]+$/)) {
@@ -190,7 +225,6 @@ if (empty($data)) {
 
                 }
 
-
                 if (value.includes("T") && value.includes(":") && value.includes("Z")) {
                     var date = new Date(value);
                     var formattedDate = `${date.getFullYear()}-${padZero(date.getMonth() + 1)}-${padZero(date.getDate())}T${padZero(date.getHours())}:${padZero(date.getMinutes())}`;
@@ -198,9 +232,48 @@ if (empty($data)) {
                     input.type = 'datetime-local';
                 }
 
+                // Add autocomplete for columns with "ID_somename"
+                // Add autocomplete for columns with "ID_somename"
+                if (columnName.match(/^ID_.+/)) {
+                    let apiname = columnName.replace("ID_", "");
+                    let api = "<?php echo $apiUrl; ?>"
+                    let desarmapi = api.split("/")
+                    desarmapi[3] = apiname.toLowerCase();
+                    let apiUrl = `${desarmapi[0]}//${desarmapi[2]}/${desarmapi[3]}/${desarmapi[4]}` + " ";
+                    console.log(apiUrl)
+                    input.autocomplete = "off"; // disable browser autocomplete
+                    var dataList = document.createElement("datalist");
+                    dataList.id = "autocomplete-list-" + columnName;
+                    input.setAttribute("list", dataList.id);
+
+                    input.addEventListener("input", function() {
+
+                        var params = {
+                            column: columnName,
+                            query: input.value
+                        };
+                        fetch(apiUrl, {
+                                method: 'GET',
+                                params: params
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                dataList.innerHTML = "";
+                                data.forEach(element => {
+                                    var option = document.createElement("option");
+                                    option.value = element.ID;
+                                    option.text = element.Nombre;
+                                    dataList.appendChild(option);
+                                });
+                            })
+                    });
+
+                    editForm.appendChild(dataList);
+                }
+
+
+
                 title.innerText = columnName;
-
-
                 editForm.appendChild(title);
                 editForm.appendChild(input);
                 editForm.appendChild(document.createElement('br'));
@@ -210,7 +283,7 @@ if (empty($data)) {
             modalFooter.setAttribute("class", "modal-footer");
 
             var submit = document.createElement("button");
-            submit.setAttribute("class", "btn btn-primary");
+            submit.setAttribute("class", "btn btn-success");
             submit.setAttribute("type", "submit");
             submit.innerText = "Guardar cambios";
             modalFooter.appendChild(submit);
@@ -227,6 +300,7 @@ if (empty($data)) {
                 event.preventDefault();
                 editRecord();
             });
+
 
             editForm.appendChild(modalFooter);
             // Mostrar el modal
@@ -277,20 +351,171 @@ if (empty($data)) {
 
         var table = document.querySelector('table');
 
-// Find the column index of the "Estado" column
-var columnIndex = -1;
-Array.from(table.rows[0].cells).forEach(function(cell, index) {
-  if (cell.textContent.trim() === 'Estado') {
-    columnIndex = index;
-  }
-});
+        // Find the column index of the "Estado" column
+        var columnIndex = -1;
+        Array.from(table.rows[0].cells).forEach(function(cell, index) {
+            if (cell.textContent.trim() === 'Estado') {
+                columnIndex = index;
+            }
+        });
 
-// Hide the column
-if (columnIndex !== -1) {
-  table.querySelectorAll('tr').forEach(function(row) {
-    row.cells[columnIndex].style.display = 'none';
-  });
-}
+        // Hide the column
+        if (columnIndex !== -1) {
+            table.querySelectorAll('tr').forEach(function(row) {
+                row.cells[columnIndex].style.display = 'none';
+            });
+        }
+
+
+
+
+        // Create the form fields dynamically
+        var headers = <?php echo json_encode($headers); ?>;
+        for (var i = 0; i < headers.length - 1; i++) {
+            var title = document.createElement("label")
+            var columnName = headers[i];
+            title.setAttribute("for", columnName)
+            title.setAttribute("class", "m-2")
+            var input = document.createElement('input');
+            input.type = 'text';
+            input.className = "form-control rounded-3 ";
+            input.setAttribute("required", "");
+
+
+            if (columnName == "ID") {
+                input.setAttribute("disabled", "")
+                input.placeholder = "Automatico"
+            }
+            if (columnName == "Contraseña") {
+                input.removeAttribute("required")
+                input.name = columnName;
+                var value = "";
+            } else {
+                input.name = columnName;
+
+            }
+
+            if (columnName == "Correo" || columnName == "Email") {
+                input.type = 'email';
+                input.pattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+            }
+
+            if (columnName.match(/^ID_.+/)) {
+                input.type = 'number';
+
+            }
+            if (columnName == "Estado") {
+                input.value = 1;
+            }
+
+
+            title.innerText = columnName;
+            createForm.appendChild(title);
+            createForm.appendChild(input);
+            createForm.appendChild(document.createElement('br'));
+        }
+
+        // Add autocomplete for columns with "ID_somename"
+        // Add autocomplete for columns with "ID_somename"
+        for (var i = 0; i < headers.length - 1; i++) {
+            var columnName = headers[i];
+            if (columnName.match(/^ID_.+/)) {
+                let apiname = columnName.replace("ID_", "");
+                let api = "<?php echo $apiUrl; ?>"
+                let desarmapi = api.split("/")
+                desarmapi[3] = apiname.toLowerCase();
+                let apiUrl = `${desarmapi[0]}//${desarmapi[2]}/${desarmapi[3]}/${desarmapi[4]}` + " ";
+                console.log(apiUrl)
+                var input = createForm.querySelector(`input[name="${columnName}"]`);
+                input.autocomplete = "off"; // disable browser autocomplete
+                var dataList = document.createElement("datalist");
+                dataList.id = "autocomplete-list-" + columnName;
+                input.setAttribute("list", dataList.id);
+
+                input.addEventListener("input", function() {
+
+                    var params = {
+                        column: columnName,
+                        query: input.value
+                    };
+                    fetch(apiUrl, {
+                            method: 'GET',
+                            params: params
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            dataList.innerHTML = "";
+                            data.forEach(element => {
+                                var option = document.createElement("option");
+                                option.value = element.ID;
+                                option.text = element.Nombre;
+                                dataList.appendChild(option);
+                            });
+                        })
+                });
+
+                createForm.appendChild(dataList);
+            }
+        }
+
+        var modalFooter = document.createElement("div");
+        modalFooter.setAttribute("class", "modal-footer");
+
+        var submit = document.createElement("button");
+        submit.setAttribute("class", "btn btn-success");
+        submit.setAttribute("type", "submit");
+        submit.innerText = "Crear Registro";
+        modalFooter.appendChild(submit);
+
+        var close = document.createElement("a");
+        close.setAttribute("class", "btn btn-secondary ");
+        close.setAttribute("data-bs-dismiss", "modal");
+        close.innerText = "Cerrar";
+        modalFooter.appendChild(close);
+
+        createForm.appendChild(modalFooter);
+
+        createForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            createRecord();
+        });
+
+        // Function to create a new record
+        function createRecord() {
+            var formData = {};
+            var inputs = createForm.children;
+            for (var i = 0; i < inputs.length; i++) {
+                var input = inputs[i];
+                if (input.name !== "Contraseña" || input.value !== "") {
+                    formData[input.name] = input.value;
+                }
+            }
+
+            var createUrl = '<?php echo str_replace("obtener", "crear", $apiUrl); ?>';
+
+            fetch(createUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        location.reload();
+                    } else {
+                        alert(data.mensaje); // Display the error message from the API response
+                    }
+                })
+                .catch(error => {
+                    alert('Error al crear el registro');
+                });
+
+            // Close the modal
+            $('#createModal').modal('hide');
+        }
     </script>
 <?php
 }

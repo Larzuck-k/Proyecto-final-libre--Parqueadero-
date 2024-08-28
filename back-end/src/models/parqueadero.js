@@ -16,7 +16,7 @@ export default db.define("Parqueadero", {
     type: DataTypes.STRING(255),
     allowNull: false,
   },
-  ID_Administrador: {
+  ID_Usuario: {
     type: DataTypes.INTEGER,
     references: {
       model: Usuario,

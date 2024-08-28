@@ -21,15 +21,21 @@ export const crearRol = async (req, res) => {
 
 // Obtener todos los roles
 export const obtenerRoles = async (req, res) => {
-    try {
-        const roles = await Rol.findAll();
-        res.status(200).send(roles);
-    } catch (error) {
-        res.status(400).send({
-            status: "error",
-            mensaje: "Error al obtener los roles: " + error
-        });
+  try {
+    const rol = await Rol.findAll();
+    if (rol.length === 0) {
+        const columnNames = Object.keys(Rol.getAttributes());
+        const emptyObject = columnNames.reduce((acc, curr) => ({ ...acc, [curr]: "" }), {});
+        res.status(200).send([emptyObject]);
+    } else {
+        res.status(200).send(rol);
     }
+} catch (error) {
+    res.status(400).send({
+        status: "error",
+        mensaje: "Error al obtener los rol: " + error
+    });
+}
 };
 
 

@@ -26,7 +26,7 @@ export default  db.define("Contratista", {
   Fecha_Fin_Contrato: {
     type: DataTypes.DATE,
   },
-  ID_Administrador: {
+  ID_Usuario: {
     type: DataTypes.INTEGER,
     references: {
       model: Usuario,

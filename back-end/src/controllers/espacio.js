@@ -28,12 +28,18 @@ export const crearEspacio = async (req, res) => {
 // Obtener todos los espacios
 export const obtenerEspacios = async (req, res) => {
     try {
-        const espacios = await Espacio.findAll();
-        res.status(200).send(espacios);
+        const espacio = await Espacio.findAll();
+        if (espacio.length === 0) {
+            const columnNames = Object.keys(Espacio.getAttributes());
+            const emptyObject = columnNames.reduce((acc, curr) => ({ ...acc, [curr]: "" }), {});
+            res.status(200).send([emptyObject]);
+        } else {
+            res.status(200).send(espacio);
+        }
     } catch (error) {
         res.status(400).send({
             status: "error",
-            mensaje: "Error al obtener los espacios: " + error
+            mensaje: "Error al obtener los espacio: " + error
         });
     }
 };

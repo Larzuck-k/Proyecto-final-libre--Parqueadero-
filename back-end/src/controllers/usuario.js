@@ -57,9 +57,18 @@ export const cambiarEstado = async (req, res) => {
 
 // Obtener todos los usuarios
 export const obtenerUsuarios = async (req, res) => {
+
+
+
     try {
         const usuarios = await Usuario.findAll();
-        res.status(200).send(usuarios);
+        if (usuarios.length === 0) {
+            const columnNames = Object.keys(Usuario.getAttributes());
+            const emptyObject = columnNames.reduce((acc, curr) => ({ ...acc, [curr]: "" }), {});
+            res.status(200).send([emptyObject]);
+        } else {
+            res.status(200).send(usuarios);
+        }
     } catch (error) {
         res.status(400).send({
             status: "error",

@@ -3,11 +3,11 @@ import Parqueadero from '../models/parqueadero.js';
 // Crear un nuevo parqueadero
 export const crearParqueadero = async (req, res) => {
     try {
-        const { Nombre, Ubicación, ID_Administrador } = req.body;
+        const { Nombre, Ubicación, ID_Usuario } = req.body;
         const nuevoParqueadero = await Parqueadero.create({
             Nombre,
             Ubicación,
-            ID_Administrador
+            ID_Usuario
         });
         res.status(200).send({
             status: "success",
@@ -24,8 +24,8 @@ export const crearParqueadero = async (req, res) => {
 
 export const cambiarEstado = async (req, res) => {
     try {
-      const { ID } = req.body;
-      const parqueadero = await Parqueadero.findByPk(ID);
+      const { id } = req.body;
+      const parqueadero = await Parqueadero.findByPk(id);
   
       if (parqueadero) {
         const estadoActual = parqueadero.Estado;
@@ -55,7 +55,13 @@ export const cambiarEstado = async (req, res) => {
 export const obtenerParqueaderos = async (req, res) => {
     try {
         const parqueaderos = await Parqueadero.findAll();
-        res.status(200).send(parqueaderos);
+        if (parqueaderos.length === 0) {
+            const columnNames = Object.keys(Parqueadero.getAttributes());
+            const emptyObject = columnNames.reduce((acc, curr) => ({ ...acc, [curr]: "" }), {});
+            res.status(200).send([emptyObject]);
+        } else {
+            res.status(200).send(parqueaderos);
+        }
     } catch (error) {
         res.status(400).send({
             status: "error",
@@ -67,14 +73,14 @@ export const obtenerParqueaderos = async (req, res) => {
 // Actualizar un parqueadero
 export const actualizarParqueadero = async (req, res) => {
     try {
-        const { id } = req.params;
-        const { Nombre, Ubicación, ID_Administrador } = req.body;
-        const parqueadero = await Parqueadero.findByPk(id);
+        const { ID } = req.body;
+        const { Nombre, Ubicación, ID_Usuario } = req.body;
+        const parqueadero = await Parqueadero.findByPk(ID);
 
         if (parqueadero) {
             parqueadero.Nombre = Nombre || parqueadero.Nombre;
             parqueadero.Ubicación = Ubicación || parqueadero.Ubicación;
-            parqueadero.ID_Administrador = ID_Administrador || parqueadero.ID_Administrador;
+            parqueadero.ID_Usuario = ID_Usuario || parqueadero.ID_Usuario;
 
             await parqueadero.save();
             res.status(200).send({
@@ -99,7 +105,7 @@ export const actualizarParqueadero = async (req, res) => {
 // Eliminar un parqueadero
 export const eliminarParqueadero = async (req, res) => {
     try {
-        const { id } = req.params;
+        const { ID } = req.body;
         const parqueadero = await Parqueadero.findByPk(id);
 
         if (parqueadero) {

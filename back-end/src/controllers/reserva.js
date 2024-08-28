@@ -56,13 +56,20 @@ export const cambiarEstado = async (req, res) => {
 
 // Obtener todas las reservas
 export const obtenerReservas = async (req, res) => {
+
     try {
-        const reservas = await Reserva.findAll();
-        res.status(200).send(reservas);
+        const reserva = await Reserva.findAll();
+        if (reserva.length === 0) {
+            const columnNames = Object.keys(Reserva.getAttributes());
+            const emptyObject = columnNames.reduce((acc, curr) => ({ ...acc, [curr]: "" }), {});
+            res.status(200).send([emptyObject]);
+        } else {
+            res.status(200).send(reserva);
+        }
     } catch (error) {
         res.status(400).send({
             status: "error",
-            mensaje: "Error al obtener las reservas: " + error
+            mensaje: "Error al obtener los reserva: " + error
         });
     }
 };

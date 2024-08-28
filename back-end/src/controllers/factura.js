@@ -57,12 +57,18 @@ export const cambiarEstado = async (req, res) => {
 // Obtener todas las facturas
 export const obtenerFacturas = async (req, res) => {
     try {
-        const facturas = await Factura.findAll();
-        res.status(200).send(facturas);
+        const factura = await Factura.findAll();
+        if (factura.length === 0) {
+            const columnNames = Object.keys(Factura.getAttributes());
+            const emptyObject = columnNames.reduce((acc, curr) => ({ ...acc, [curr]: "" }), {});
+            res.status(200).send([emptyObject]);
+        } else {
+            res.status(200).send(factura);
+        }
     } catch (error) {
         res.status(400).send({
             status: "error",
-            mensaje: "Error al obtener las facturas: " + error
+            mensaje: "Error al obtener los factura: " + error
         });
     }
 };
