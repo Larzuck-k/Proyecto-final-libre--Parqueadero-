@@ -80,9 +80,9 @@ if (empty($data)) {
     echo '</table>';
 
 
-    echo '<div class="modal"    id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">';
+    echo '<div class="modal text-white"    id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">';
     echo '<div class="modal-dialog" role="document">';
-    echo '<div class="modal-content">';
+    echo '<div class="modal-content bg-dark border-0">';
     echo '<div class="modal-header">';
     echo '<h5 class="modal-title" id="editModalLabel">Editar registro</h5>';
 
@@ -153,10 +153,11 @@ if (empty($data)) {
             var headers = <?php echo json_encode($headers); ?>;
             for (var i = 0; i < headers.length - 1; i++) {
                 var title = document.createElement("span")
+                title.setAttribute("class","text-start")
                 var columnName = headers[i];
                 var input = document.createElement('input');
                 input.type = 'text';
-                input.className = "form-control";
+                input.className = "form-control rounded-3 ";
                 input.setAttribute("required", "");
 
                 if (columnName == "ID") {
