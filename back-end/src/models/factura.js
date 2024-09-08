@@ -1,54 +1,35 @@
 import { DataTypes } from "sequelize";
 import db from "./db.js";
-import Cliente_Normal from "./cliente_normal.js";
-import Contratista from "./contratista.js";
-import Reserva from "./reserva.js";
 import Contrato from "./contrato.js";
+import cliente_contratista from "./cliente_contratista.js";
 
 export default  db.define("Factura", {
-  ID: {
+  id: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
     primaryKey: true,
   },
-  Fecha_Emisión: {
+  fecha_emision: {
     type: DataTypes.DATE,
     allowNull: false,
   },
-  Monto_Total: {
+  monto_total: {
     type: DataTypes.DECIMAL(10, 2),
     allowNull: false,
   },
-  ID_Cliente: {
+  id_cliente_contratista: {
     type: DataTypes.INTEGER,
     references: {
-      model: Cliente_Normal,
-      key: 'ID',
+      model: cliente_contratista,
+      key: 'id',
     },
   },
-  ID_Contratista: {
-    type: DataTypes.INTEGER,
-    references: {
-      model: Contratista,
-      key: 'ID',
-    },
-  },
-  ID_Reserva: {
-    type: DataTypes.INTEGER,
-    references: {
-      model: Reserva,
-      key: 'ID',
-    },
-  },
-  ID_Contrato: {
+  id_contrato: {
     type: DataTypes.INTEGER,
     references: {
       model: Contrato,
-      key: 'ID',
+      key: 'id',
     },
-  }, Estado: {
-    type: DataTypes.INTEGER,
-    defaultValue: 1
   }
 }, {
   tableName: 'Factura',

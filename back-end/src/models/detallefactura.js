@@ -4,28 +4,28 @@ import Factura from "./factura.js";
 import Espacio from "./espacio.js";
 
 export default db.define("DetalleFactura", {
-  ID: {
+  id: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
     primaryKey: true,
   },
-  ID_Factura: {
+  id_factura: {
     type: DataTypes.INTEGER,
     references: {
       model: Factura,
-      key: 'ID',
+      key: 'id',
     },
     allowNull: false,
   },
-  ID_Espacio: {
+  id_espacio: {
     type: DataTypes.INTEGER,
     references: {
       model: Espacio,
-      key: 'ID',
+      key: 'id',
     },
     allowNull: false,
   },
-  Monto: {
+  monto: {
     type: DataTypes.DECIMAL(10, 2),
     allowNull: false,
   },

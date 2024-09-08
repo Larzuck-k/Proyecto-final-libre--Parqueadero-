@@ -1,20 +1,38 @@
+import Cliente_Contratista from "../models/cliente_contratista.js";
 import ClienteNormal from "../models/cliente_normal.js";
+import db from "../models/db.js";
 
 // Crear un nuevo cliente normal
 export const crearClienteNormal = async (req, res) => {
+  const transaction = await db.transaction();
   try {
-    const { Nombre, Email, Teléfono } = req.body;
-    const nuevoCliente = await ClienteNormal.create({
-      Nombre,
-      Email,
-      Teléfono,
-    });
+    const { nombre, email, telefono,ultima_visita } = req.body; 
+    const nuevoCliente = await ClienteNormal.create(
+      {
+        nombre,
+        email,
+        telefono,
+        ultima_visita: new Date(Date.now() - 5 * 60 * 60 * 1000),
+      },
+      { transaction }
+    );
+    const nuevoClienteId = nuevoCliente.id;
+
+    // Crear la relación con la tabla Cliente_Contratista
+    await Cliente_Contratista.create({
+      id_cliente: nuevoClienteId,
+      id_contratista: null,
+      estado: 1,
+    },{transaction});
+
+    transaction.commit();
     res.status(200).send({
       status: "success",
       mensaje: "Cliente creado exitosamente",
       cliente: nuevoCliente,
     });
   } catch (error) {
+    transaction.rollback();
     res.status(400).send({
       status: "error",
       mensaje: "Error al crear el cliente: " + error,
@@ -26,14 +44,17 @@ export const crearClienteNormal = async (req, res) => {
 export const cambiarEstado = async (req, res) => {
   try {
     const { id } = req.body;
-    console.log(id);
-    const cliente = await ClienteNormal.findByPk(id);
+    const cliente = await ClienteNormal.findByPk(id,{include:{model:Cliente_Contratista,attributes:["id","estado"],as:"Cliente_Contratista_Cliente"}});
 
-    if (cliente) {
-      const estadoActual = cliente.Estado;
+    if (cliente && cliente.Cliente_Contratista_Cliente) {
+      const clienteContratista = cliente.Cliente_Contratista_Cliente; // Asume que es un objeto, no un array
+      const estadoActual = clienteContratista.estado;
       const nuevoEstado = estadoActual === 0 ? 1 : 0;
-      cliente.Estado = nuevoEstado;
-      await cliente.save();
+      clienteContratista.estado = nuevoEstado;
+
+      // Guardar los cambios en la tabla Cliente_Contratista
+      console.log(clienteContratista);
+      await clienteContratista.save();
       res.status(200).send({
         status: "success",
         mensaje: "Se ha actualizado el actualizado exitosamente",
@@ -55,18 +76,45 @@ export const cambiarEstado = async (req, res) => {
 // Obtener todos los clientes normales
 export const obtenerClientesNormales = async (req, res) => {
   try {
-    const cliente = await ClienteNormal.findAll();
-    if (cliente.length === 0) {
-        const columnNames = Object.keys(ClienteNormal.getAttributes());
-        const emptyObject = columnNames.reduce((acc, curr) => ({ ...acc, [curr]: "" }), {});
-        res.status(200).send([emptyObject]);
+    // Realizar la consulta con la inclusión
+    const clientes = await ClienteNormal.findAll({
+      include: {
+        model: Cliente_Contratista,
+        attributes: ["estado"],
+        as: "Cliente_Contratista_Cliente",
+      },
+    });
+
+    if (clientes.length === 0) {
+      // Si no hay clientes, devolver una fila vacía con el nuevo campo 'estado'
+      const columnNames = Object.keys(ClienteNormal.getAttributes());
+      columnNames.push("estado");
+      const emptyObject = columnNames.reduce(
+        (acc, curr) => ({ ...acc, [curr]: "" }),
+        {}
+      );
+      res.status(200).send([emptyObject]);
     } else {
-        res.status(200).send(cliente);
+      // Transformar los datos para aplanar el objeto Cliente_Contratista_Cliente
+      const transformedClientes = clientes.map((cliente) => {
+        // Convertir el cliente en un objeto simple
+        const clienteData = cliente.toJSON();
+
+        // Extraer el estado y eliminar la propiedad anidada
+        if (clienteData.Cliente_Contratista_Cliente) {
+          clienteData.estado = clienteData.Cliente_Contratista_Cliente.estado;
+          delete clienteData.Cliente_Contratista_Cliente;
+        }
+
+        return clienteData;
+      });
+
+      res.status(200).send(transformedClientes);
     }
-} catch (error) {
+  } catch (error) {
     res.status(400).send({
         status: "error",
-        mensaje: "Error al obtener los cliente: " + error
+        mensaje: "Error al obtener los clientes: " + error
     });
 }
 };
@@ -74,14 +122,14 @@ export const obtenerClientesNormales = async (req, res) => {
 // Actualizar un cliente normal
 export const actualizarClienteNormal = async (req, res) => {
   try {
-    const { ID } = req.body;
-    const { Nombre, Email, Teléfono } = req.body;
-    const cliente = await ClienteNormal.findByPk(ID);
+    const { id } = req.body;
+    const { nombre, email, telefono } = req.body;
+    const cliente = await ClienteNormal.findByPk(id);
 
     if (cliente) {
-      cliente.Nombre = Nombre || cliente.Nombre;
-      cliente.Email = Email || cliente.Email;
-      cliente.Teléfono = Teléfono || cliente.Teléfono;
+      cliente.nombre = nombre || cliente.nombre;
+      cliente.email = email || cliente.email;
+      cliente.telefono = telefono || cliente.telefono;
       await cliente.save();
       res.status(200).send({
         status: "success",

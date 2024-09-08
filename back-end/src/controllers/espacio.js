@@ -1,16 +1,15 @@
 import Espacio from '../models/espacio.js';
-import factura from './factura.js';
+import tipo_ocupacion from '../models/tipo_ocupacion.js';
 
 // Crear un nuevo espacio
 export const crearEspacio = async (req, res) => {
     try {
-        const { Número, Estado, Tipo_Ocupación, Fila, ID_Parqueadero } = req.body;
+        const { numero, id_tipo_ocupacion, id_parqueadero,estado } = req.body;
         const nuevoEspacio = await Espacio.create({
-            Número,
-            Estado,
-            Tipo_Ocupación,
-            Fila,
-            ID_Parqueadero
+            numero,
+            id_tipo_ocupacion,
+            id_parqueadero,
+            estado
         });
         res.status(200).send({
             status: "success",
@@ -28,9 +27,11 @@ export const crearEspacio = async (req, res) => {
 // Obtener todos los espacios
 export const obtenerEspacios = async (req, res) => {
     try {
-        const espacio = await Espacio.findAll();
+        const espacio = await Espacio.findAll({include:{model:tipo_ocupacion,attributes:["descripcion"]}});
+        console.log(espacio);
         if (espacio.length === 0) {
             const columnNames = Object.keys(Espacio.getAttributes());
+            columnNames.splice(3,0,'descripcion')
             const emptyObject = columnNames.reduce((acc, curr) => ({ ...acc, [curr]: "" }), {});
             res.status(200).send([emptyObject]);
         } else {
@@ -46,13 +47,13 @@ export const obtenerEspacios = async (req, res) => {
 
 export const cambiarEstado = async (req, res) => {
     try {
-      const { ID } = req.body;
-      const espacio = await Espacio.findByPk(ID);
+      const { id } = req.body;
+      const espacio = await Espacio.findByPk(id);
   
       if (espacio) {
-        const estadoActual = espacio.Estado;
-        const nuevoEstado = estadoActual === 0 ? 1 : 0;
-        espacio.Estado = nuevoEstado;
+        const estadoActual = espacio.estado;
+        const nuevoEstado = estadoActual === "Disponible" ? "Ocupado" : "Disponible";
+        espacio.estado = nuevoEstado;
         await espacio.save();
         res.status(200).send({
           status: "success",
@@ -77,15 +78,14 @@ export const cambiarEstado = async (req, res) => {
 export const actualizarEspacio = async (req, res) => {
     try {
         const { id } = req.params;
-        const { Número, Estado, Tipo_Ocupación, Fila, ID_Parqueadero } = req.body;
+        const { numero, tipo_ocupacion, id_parqueadero,estado } = req.body;
         const espacio = await Espacio.findByPk(id);
 
         if (espacio) {
-            espacio.Número = Número || espacio.Número;
-            espacio.Estado = Estado || espacio.Estado;
-            espacio.Tipo_Ocupación = Tipo_Ocupación || espacio.Tipo_Ocupación;
-            espacio.Fila = Fila || espacio.Fila;
-            espacio.ID_Parqueadero = ID_Parqueadero || espacio.ID_Parqueadero;
+            espacio.numero = numero || espacio.numero;
+            espacio.tipo_ocupacion = tipo_ocupacion || espacio.tipo_ocupacion;
+            espacio.id_parqueadero = id_parqueadero || espacio.id_parqueadero;
+            espacio.estado = estado || espacio.estado;
 
             await espacio.save();
             res.status(200).send({

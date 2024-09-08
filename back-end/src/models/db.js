@@ -2,7 +2,7 @@ import {Sequelize} from "sequelize";
 import dotenv from "dotenv";
 dotenv.config({ path: "././.env" });
 
-//Instansiamos la clase sequelize y establacemos la conexión con sus respectivos datos
+//Instanciamos la clase sequelize y establacemos la conexión con sus respectivos datos
 export default new Sequelize(process.env.MYSQL_DATABASE,process.env.MYSQL_USER,process.env.MYSQL_PASSWORD,{
     host:process.env.MYSQL_HOST,
 

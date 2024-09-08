@@ -1,47 +1,54 @@
 import { DataTypes } from "sequelize";
 import db from "./db.js";
-import Contratista from "./contratista.js";
 import Espacio from "./espacio.js";
+import cliente_contratista from "./cliente_contratista.js";
+import contratos from "./contratos.js";
 
-export default db.define("Contrato", {
-  ID: {
-    type: DataTypes.INTEGER,
-    autoIncrement: true,
-    primaryKey: true,
-  },
-  Fecha_Inicio: {
-    type: DataTypes.DATE,
-    allowNull: false,
-  },
-  Fecha_Fin: {
-    type: DataTypes.DATE,
-    allowNull: false,
-  },
-  Monto: {
-    type: DataTypes.DECIMAL(10, 2),
-    allowNull: false,
-  },
-  ID_Contratista: {
-    type: DataTypes.INTEGER,
-    references: {
-      model: Contratista,
-      key: 'ID',
+export default db.define(
+  "Contrato",
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+    },
+    fecha_inicio: {
+      type: DataTypes.DATE,
+      allowNull: false,
+    },
+    fecha_fin: {
+      type: DataTypes.DATE,
+      allowNull: false,
+    },
+    id_cliente_contratista: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: cliente_contratista,
+        key: "id",
+      },
+    },
+    id_contratos: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: contratos,
+        key: "id",
+      },
+    },
+    id_espacio: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: Espacio,
+        key: "id",
+      },
+    },
+    estado: {
+      type: DataTypes.INTEGER,
+      defaultValue: 1,
     },
   },
-  ID_Espacio: {
-    type: DataTypes.INTEGER,
-    references: {
-      model: Espacio,
-      key: 'ID',
-    },
-    
-  },
-  Estado: {
-    type: DataTypes.INTEGER,
-    defaultValue: 1
+  {
+    tableName: "Contrato",
+    timestamps: false,
   }
-}, {
-  tableName: 'Contrato',
-  timestamps: false,
-});
+);
 

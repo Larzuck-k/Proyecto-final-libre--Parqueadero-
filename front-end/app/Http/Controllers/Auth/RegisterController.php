@@ -63,6 +63,7 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
+        // Crear el usuario en la base de datos local
         return User::create([
             'name' => $data['name'],
             'email' => $data['email'],

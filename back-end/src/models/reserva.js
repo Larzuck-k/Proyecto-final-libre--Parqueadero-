@@ -4,37 +4,30 @@ import Cliente_Normal from "./cliente_normal.js";
 import Espacio from "./espacio.js";
 
 export default  db.define("Reserva", {
-  ID: {
+  id: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
     primaryKey: true,
   },
-  Fecha_Hora_Inicio: {
-    type: DataTypes.DATE,
-    allowNull: false,
-  },
-  Fecha_Hora_Fin: {
-    type: DataTypes.DATE,
-    allowNull: false,
-  },
-  Monto_Pagado: {
-    type: DataTypes.DECIMAL(10, 2),
-    allowNull: false,
-  },
-  ID_Cliente: {
+  id_cliente_contratista: {
     type: DataTypes.INTEGER,
     references: {
       model: Cliente_Normal,
-      key: 'ID',
+      key: 'id',
     },
   },
-  ID_Espacio: {
+  id_espacio: {
     type: DataTypes.INTEGER,
     references: {
       model: Espacio,
-      key: 'ID',
+      key: 'id',
     },
-  }, Estado: {
+  }, 
+  fin_reserva:{
+    type: DataTypes.DATE,
+    allowNull: false,
+    },
+    estado: {
     type: DataTypes.INTEGER,
     defaultValue: 1
   }

@@ -2,41 +2,33 @@ import { DataTypes } from "sequelize";
 import db from "./db.js";
 import Usuario from "./usuario.js";
 
-export default  db.define("Contratista", {
-  ID: {
+
+
+const Contratista = db.define("Contratista", {
+  id: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
     primaryKey: true,
   },
-  Nombre: {
+  nombre: {
     type: DataTypes.STRING(100),
     allowNull: false,
   },
-  Email: {
+  email: {
     type: DataTypes.STRING(100),
     allowNull: false,
     unique: true,
   },
-  Teléfono: {
+  telefono: {
     type: DataTypes.STRING(15),
   },
-  Fecha_Inicio_Contrato: {
-    type: DataTypes.DATE,
-  },
-  Fecha_Fin_Contrato: {
-    type: DataTypes.DATE,
-  },
-  ID_Usuario: {
+  id_usuario: {
     type: DataTypes.INTEGER,
     references: {
       model: Usuario,
-      key: 'ID',
+      key: 'id',
     },
   
-  },
-  Estado: {
-    type: DataTypes.INTEGER,
-    defaultValue: 1
   }
 }, {
   tableName: 'Contratista',
@@ -44,3 +36,5 @@ export default  db.define("Contratista", {
 });
 
 
+
+export default Contratista;

@@ -2,18 +2,14 @@ import { DataTypes } from "sequelize";
 import db from "./db.js";
 
 export default  db.define("Rol", {
-  ID: {
+  id: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
     primaryKey: true,
   },
-  Nombre: {
+  nombre: {
     type: DataTypes.STRING(50),
     allowNull: false,
-  },
-  Estado: {
-    type: DataTypes.INTEGER,
-    defaultValue: 1
   }
 }, {
   tableName: 'Rol',

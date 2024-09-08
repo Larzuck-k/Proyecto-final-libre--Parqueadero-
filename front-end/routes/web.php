@@ -1,22 +1,42 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
-use App\Http\Controllers\MenuController;
+
+// Rutas públicas
+
 Route::get('/login', function () {
     return view('login');
-});
+})->name('login');
+
 Route::get('/register', function () {
     return view('register');
+})->name('register');
+
+// Rutas protegidas por autenticación, estado y roles
+
+Route::middleware(['auth', 'status'])->group(function () {
+    Route::get('/home', function () {
+        return view('home');
+    });
+    Route::get('/', function () {
+        return view('home');
+    });
+    Route::get('/databases', function () {
+        return view('databases');
+    })->name('databases');
+
+    Route::get('/table', function () {
+        return view('table');
+    })->name('table');
+    Route::get('/parking', function () {
+        return view('parking');
+    })->name('parking');
 });
-Route::get('/databases', function () {
-    return view('databases');
-});
-Route::get('/table', function () {
-    return view('table');
-});
+
+
+
+// Autenticación de Laravel
 Auth::routes();
 
-Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
-Route::get('/menu', [App\Http\Controllers\MenuController::class, 'index'])->name('menu');

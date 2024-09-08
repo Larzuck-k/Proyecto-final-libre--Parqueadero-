@@ -1,14 +1,13 @@
 import DetalleFactura from '../models/detalleFactura.js';
-import detallefactura from '../routes/detallefactura.js';
 
 // Crear un nuevo detalle de factura
 export const crearDetalleFactura = async (req, res) => {
     try {
-        const { ID_Factura, ID_Espacio, Monto } = req.body;
+        const { id_factura, id_espacio, monto } = req.body;
         const nuevoDetalle = await DetalleFactura.create({
-            ID_Factura,
-            ID_Espacio,
-            Monto
+            id_factura,
+            id_espacio,
+            monto
         });
         res.status(200).send({
             status: "success",
@@ -40,13 +39,13 @@ export const obtenerDetallesFactura = async (req, res) => {
 export const actualizarDetalleFactura = async (req, res) => {
     try {
         const { id } = req.params;
-        const { ID_Factura, ID_Espacio, Monto } = req.body;
+        const { id_factura, id_espacio, monto } = req.body;
         const detalleFactura = await DetalleFactura.findByPk(id);
 
         if (detalleFactura) {
-            detalleFactura.ID_Factura = ID_Factura || detalleFactura.ID_Factura;
-            detalleFactura.ID_Espacio = ID_Espacio || detalleFactura.ID_Espacio;
-            detalleFactura.Monto = Monto || detalleFactura.Monto;
+            detalleFactura.id_factura = id_factura || detalleFactura.id_factura;
+            detalleFactura.id_espacio = id_espacio || detalleFactura.id_espacio;
+            detalleFactura.monto = monto || detalleFactura.monto;
             await detalleFactura.save();
             res.status(200).send({
                 status: "success",

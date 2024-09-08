@@ -1,24 +1,35 @@
+import Cliente_Contratista from '../models/cliente_contratista.js';
 import Contratista from '../models/contratista.js';
-import contratista from '../routes/contratista.js';
+import db from '../models/db.js';
 
 // Crear un nuevo contratista
 export const crearContratista = async (req, res) => {
+    const transaction = await db.transaction();
     try {
-        const { Nombre, Email, Teléfono, Fecha_Inicio_Contrato, Fecha_Fin_Contrato, ID_Administrador } = req.body;
+        const { nombre, email, telefono,  id_usuario } = req.body;
+
         const nuevoContratista = await Contratista.create({
-            Nombre,
-            Email,
-            Teléfono,
-            Fecha_Inicio_Contrato,
-            Fecha_Fin_Contrato,
-            ID_Administrador
-        });
+            nombre,
+            email,
+            telefono,
+            id_usuario
+        },{transaction});
+        const nuevoContratistaId = nuevoContratista.id;
+
+        await Cliente_Contratista.create({
+            id_usuario: null,   
+            id_contratista: nuevoContratistaId,
+            estado: 1,
+        },{transaction});
+
+        transaction.commit();
         res.status(200).send({
             status: "success",
             mensaje: "Contratista creado exitosamente",
             contratista: nuevoContratista
         });
     } catch (error) {
+        transaction.rollback();
         res.status(400).send({
             status: "error",
             mensaje: "Error al crear el contratista: " + error
@@ -29,21 +40,31 @@ export const crearContratista = async (req, res) => {
 export const cambiarEstado = async (req, res) => {
     try {
       const { id } = req.body;
-      const contratista = await Contratista.findByPk(id);
-  
-      if (contratista) {
-        const estadoActual = contratista.Estado;
+      const contratista = await Contratista.findByPk(id, {
+        include: {
+          model: Cliente_Contratista,
+          attributes: ["id", "estado"],
+          as: "Cliente_Contratista_Contratista",
+        },
+      });
+
+      if (contratista && contratista.Cliente_Contratista_Contratista) {
+        const clienteContratista = contratista.Cliente_Contratista_Contratista; // Asume que es un objeto, no un array
+        const estadoActual = clienteContratista.estado;
         const nuevoEstado = estadoActual === 0 ? 1 : 0;
-        contratista.Estado = nuevoEstado;
-        await contratista.save();
+        clienteContratista.estado = nuevoEstado;
+
+        // Guardar los cambios en la tabla Cliente_Contratista
+        console.log(clienteContratista);
+        await clienteContratista.save();
         res.status(200).send({
           status: "success",
-          mensaje: "Se ha actualizado el actualizado exitosamente"
+          mensaje: "Se ha actualizado el actualizado exitosamente",
         });
       } else {
         res.status(404).send({
           status: "error",
-          mensaje: "Registro no encontrado"
+          mensaje: "Registro no encontrado",
         });
       }
     } catch (error) {
@@ -58,13 +79,32 @@ export const cambiarEstado = async (req, res) => {
 // Obtener todos los contratistas
 export const obtenerContratistas = async (req, res) => {
     try {
-        const contratistas = await Contratista.findAll();
+        const contratistas = await Contratista.findAll({
+          include:{model: Cliente_Contratista,
+          attributes: ["estado"],
+          as: "Cliente_Contratista_Contratista"
+        }});
+
         if (contratistas.length === 0) {
             const columnNames = Object.keys(Contratista.getAttributes());
+            columnNames.push('estado');
             const emptyObject = columnNames.reduce((acc, curr) => ({ ...acc, [curr]: "" }), {});
             res.status(200).send([emptyObject]);
         } else {
-            res.status(200).send(contratistas);
+          // Transformar los datos para aplanar el objeto Cliente_Contratista_Cliente
+          const transformedContratistas = contratistas.map((contratista) => {
+            // Convertir el cliente en un objeto simple
+            const contratistaData = contratista.toJSON();
+
+            // Extraer el estado y eliminar la propiedad anidada
+            if (contratistaData.Cliente_Contratista_Contratista) {
+              contratistaData.estado =
+                contratistaData.Cliente_Contratista_Contratista.estado;
+              delete contratistaData.Cliente_Contratista_Contratista;
+            }
+            return contratistaData;
+          });
+          res.status(200).send(transformedContratistas);
         }
     } catch (error) {
         res.status(400).send({
@@ -77,17 +117,15 @@ export const obtenerContratistas = async (req, res) => {
 // Actualizar un contratista
 export const actualizarContratista = async (req, res) => {
     try {
-        const { ID } = req.body;
-        const { Nombre, Email, Teléfono, Fecha_Inicio_Contrato, Fecha_Fin_Contrato, ID_Administrador } = req.body;
-        const contratista = await Contratista.findByPk(ID);
+        const { id } = req.body;
+        const { nombre, email, telefono, id_usuario } = req.body;
+        const contratista = await Contratista.findByPk(id);
 
         if (contratista) {
-            contratista.Nombre = Nombre || contratista.Nombre;
-            contratista.Email = Email || contratista.Email;
-            contratista.Teléfono = Teléfono || contratista.Teléfono;
-            contratista.Fecha_Inicio_Contrato = Fecha_Inicio_Contrato || contratista.Fecha_Inicio_Contrato;
-            contratista.Fecha_Fin_Contrato = Fecha_Fin_Contrato || contratista.Fecha_Fin_Contrato;
-            contratista.ID_Administrador = ID_Administrador || contratista.ID_Administrador;
+            contratista.nombre = nombre || contratista.nombre;
+            contratista.email = email || contratista.email;
+            contratista.telefono = telefono || contratista.telefono;
+            contratista.id_usuario = id_usuario || contratista.id_usuario;
             await contratista.save();
             res.status(200).send({
                 status: "success",

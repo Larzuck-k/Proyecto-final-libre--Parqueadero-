@@ -1,40 +1,37 @@
 import { DataTypes } from "sequelize";
 import db from "./db.js";
 import Parqueadero from "./parqueadero.js";
+import tipo_ocupacion from "./tipo_ocupacion.js";
 
 export default  db.define("Espacio", {
-  ID: {
+  id: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
     primaryKey: true,
   },
-  Número: {
+  numero: {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
-  Estado: {
-    type: DataTypes.ENUM('Disponible', 'Ocupado'),
+  id_tipo_ocupacion: {
+    type: DataTypes.INTEGER,
     allowNull: false,
+    references:{
+      model:tipo_ocupacion,
+      key:"id"
+    }
   },
-  Tipo_Ocupación: {
-    type: DataTypes.ENUM('Contratista', 'Cliente_Normal'),
-    allowNull: false,
-  },
-  Fila: {
-    type: DataTypes.CHAR(1),
-    allowNull: false,
-  },
-  ID_Parqueadero: {
+  id_parqueadero: {
     type: DataTypes.INTEGER,
     references: {
       model: Parqueadero,
-      key: 'ID',
+      key: 'id',
     },
   },
-  Estado: {
-    type: DataTypes.INTEGER,
-    defaultValue: 1
-  }
+  estado: {
+    type: DataTypes.ENUM('Disponible', 'Ocupado'),
+    allowNull: false,
+  },
 }, {
   tableName: 'Espacio',
   timestamps: false,

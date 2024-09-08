@@ -1,16 +1,17 @@
-import Contrato from '../models/contrato.js';
-import contrato from '../routes/contrato.js';
+
+import contratosModel from '../models/contratos.js';
+import Contrato from "../models/contrato.js";
 
 // Crear un nuevo contrato
 export const crearContrato = async (req, res) => {
     try {
-        const { Fecha_Inicio, Fecha_Fin, Monto, ID_Contratista, ID_Espacio } = req.body;
+        const { fecha_inicio, fecha_fin, id_cliente_contratista,id_contratos, id_espacio } = req.body;
         const nuevoContrato = await Contrato.create({
-            Fecha_Inicio,
-            Fecha_Fin,
-            Monto,
-            ID_Contratista,
-            ID_Espacio
+            fecha_inicio,
+            fecha_fin,
+            id_cliente_contratista,
+            id_contratos,
+            id_espacio
         });
         res.status(200).send({
             status: "success",
@@ -27,13 +28,13 @@ export const crearContrato = async (req, res) => {
 
 export const cambiarEstado = async (req, res) => {
     try {
-      const { ID } = req.body;
-      const contrato = await Contrato.findByPk(ID);
+      const { id } = req.body;
+      const contrato = await Contrato.findByPk(id);
   
       if (contrato) {
-        const estadoActual = contrato.Estado;
+        const estadoActual = contrato.estado;
         const nuevoEstado = estadoActual === 0 ? 1 : 0;
-        contrato.Estado = nuevoEstado;
+        contrato.estado = nuevoEstado;
         await contrato.save();
         res.status(200).send({
           status: "success",
@@ -57,7 +58,13 @@ export const cambiarEstado = async (req, res) => {
 // Obtener todos los contratos
 export const obtenerContratos = async (req, res) => {
     try {
-        const contratos = await Contrato.findAll();
+        const contratos = await Contrato.findAll({
+          include: {
+            model: contratosModel,
+            attributes: ["valor", "tipo", "tiempo"],
+            as: "Contratos",
+          },
+        });
         if (contratos.length === 0) {
             const columnNames = Object.keys(Contrato.getAttributes());
             const emptyObject = columnNames.reduce((acc, curr) => ({ ...acc, [curr]: "" }), {});
@@ -77,15 +84,15 @@ export const obtenerContratos = async (req, res) => {
 export const actualizarContrato = async (req, res) => {
     try {
         const { id } = req.params;
-        const { Fecha_Inicio, Fecha_Fin, Monto, ID_Contratista, ID_Espacio } = req.body;
+        const { fecha_inicio, fecha_fin, id_cliente_contratista,id_contratos,id_espacio } = req.body;
         const contrato = await Contrato.findByPk(id);
 
         if (contrato) {
-            contrato.Fecha_Inicio = Fecha_Inicio || contrato.Fecha_Inicio;
-            contrato.Fecha_Fin = Fecha_Fin || contrato.Fecha_Fin;
-            contrato.Monto = Monto || contrato.Monto;
-            contrato.ID_Contratista = ID_Contratista || contrato.ID_Contratista;
-            contrato.ID_Espacio = ID_Espacio || contrato.ID_Espacio;
+            contrato.fecha_inicio = fecha_inicio || contrato.fecha_inicio;
+            contrato.fecha_fin = fecha_fin || contrato.fecha_fin;
+            contrato.id_contratos = id_contratos || contrato.id_contratos;
+            contrato.id_cliente_contratista = id_cliente_contratista || contrato.id_cliente_contratista;
+            contrato.id_espacio = id_espacio || contrato.id_espacio;
             await contrato.save();
             res.status(200).send({
                 status: "success",

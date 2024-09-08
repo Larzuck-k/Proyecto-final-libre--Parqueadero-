@@ -28,8 +28,8 @@ CREATE TABLE Contratista (
     Teléfono VARCHAR(15),
     Fecha_Inicio_Contrato DATE,
     Fecha_Fin_Contrato DATE,
-    ID_Administrador INT,
-    FOREIGN KEY (ID_Administrador) REFERENCES Usuario(ID_Usuario)
+    ID_Usuario INT,
+    FOREIGN KEY (ID_Usuario) REFERENCES Usuario(ID_Usuario)
 );
 
 -- Tabla Cliente_Normal
@@ -45,8 +45,8 @@ CREATE TABLE Parqueadero (
     ID_Parqueadero INT AUTO_INCREMENT PRIMARY KEY,
     Nombre VARCHAR(100) NOT NULL,
     Ubicación VARCHAR(255) NOT NULL,
-    ID_Administrador INT,
-    FOREIGN KEY (ID_Administrador) REFERENCES Usuario(ID_Usuario)
+    ID_Usuario INT,
+    FOREIGN KEY (ID_Usuario) REFERENCES Usuario(ID_Usuario)
 );
 
 -- Tabla Espacio

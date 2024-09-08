@@ -1,30 +1,39 @@
 import { DataTypes } from "sequelize";
 import db from "./db.js";
+import Cliente_Contratista from "./cliente_contratista.js";
 
-export default db.define("Cliente_Normal", {
-  ID: {
-    type: DataTypes.INTEGER,
-    autoIncrement: true,
-    primaryKey: true,
+const Cliente = db.define(
+  "Cliente_Normal",
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+    },
+    nombre: {
+      type: DataTypes.STRING(100),
+      allowNull: false,
+    },
+    email: {
+      type: DataTypes.STRING(100),
+      allowNull: true,
+      unique: true,
+    },
+    telefono: {
+      type: DataTypes.STRING(15),
+    },
+    ultima_visita: {
+      type: DataTypes.DATE,
+      allowNull: false,
+    },
   },
-  Nombre: {
-    type: DataTypes.STRING(100),
-    allowNull: false,
-  },
-  Email: {
-    type: DataTypes.STRING(100),
-    allowNull: false,
-    unique: true,
-  },
-  Teléfono: {
-    type: DataTypes.STRING(15),
-  },
-  Estado: {
-    type: DataTypes.INTEGER,
-    defaultValue: 1
+  {
+    tableName: "Cliente_Normal",
+    timestamps: false,
   }
-}, {
-  tableName: 'Cliente_Normal',
-  timestamps: false,
-});
+);
 
+
+
+
+export default Cliente;

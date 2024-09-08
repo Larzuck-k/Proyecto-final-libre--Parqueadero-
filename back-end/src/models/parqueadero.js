@@ -3,26 +3,27 @@ import db from "./db.js";
 import Usuario from "./usuario.js";
 
 export default db.define("Parqueadero", {
-  ID: {
+  id: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
     primaryKey: true,
   },
-  Nombre: {
+  nombre: {
     type: DataTypes.STRING(100),
     allowNull: false,
   },
-  Ubicación: {
+  ubicacion: {
     type: DataTypes.STRING(255),
     allowNull: false,
   },
-  ID_Usuario: {
+  id_usuario: {
     type: DataTypes.INTEGER,
     references: {
       model: Usuario,
-      key: 'ID',
+      key: 'id',
     },
-  }, Estado: {
+  }, 
+  estado: {
     type: DataTypes.INTEGER,
     defaultValue: 1
   }
