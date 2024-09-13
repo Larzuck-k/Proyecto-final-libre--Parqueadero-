@@ -2,6 +2,7 @@ import express from "express";
 
 import detallefactura from "./src/routes/detallefactura.js";
 import espacio from "./src/routes/espacio.js";
+import tipo_ocupacion from "./src/routes/tipo_ocupacion.js";
 import factura from "./src/routes/factura.js";
 import parqueadero from "./src/routes/parqueadero.js";
 import reserva from "./src/routes/reserva.js";
@@ -13,7 +14,7 @@ import contrato from "./src/routes/contrato.js";
 import contratos from "./src/routes/contratos.js";
 import cnx from "./src/models/db.js";
 import cors from 'cors'
-
+import cliente_contratista from "./src/routes/cliente_contratista.js";
 // Modelos
 import "./src/models/cliente_contratista.js";
 import "./src/models/cliente_normal.js";
@@ -21,6 +22,7 @@ import "./src/models/contratista.js";
 import "./src/models/contrato.js";
 import "./src/models/contratos.js";
 import "./src/models/detalleFactura.js";
+import "./src/models/tipo_ocupacion.js";
 import "./src/models/espacio.js";
 import "./src/models/factura.js";
 import "./src/models/parqueadero.js";
@@ -33,6 +35,7 @@ import "./src/models/zassociations.js";
 import bodyparser from "body-parser";
 
 import dotenv from "dotenv";
+
 
 dotenv.config({ path: "././.env" });
 
@@ -69,6 +72,7 @@ cnx
 
 app.use(detallefactura);
 app.use(espacio);
+app.use(tipo_ocupacion);
 app.use(factura);
 app.use(usuario);
 app.use(parqueadero);
@@ -78,7 +82,7 @@ app.use(contratista);
 app.use(contrato);
 app.use(contratos);
 app.use(clientenormal);
-
+app.use(cliente_contratista);
 
 app.server = app.listen(port, () => {
   console.log(`Server ejecutandose en ${port}...`);

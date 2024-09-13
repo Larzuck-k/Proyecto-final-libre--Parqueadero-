@@ -22,11 +22,13 @@ export default db.define("Parqueadero", {
       model: Usuario,
       key: 'id',
     },
-  }, 
+    allowNull:false,
+  },
   estado: {
     type: DataTypes.INTEGER,
-    defaultValue: 1
-  }
+    defaultValue: 1,
+    allowNull:false,
+  },
 }, {
   tableName: 'Parqueadero',
   timestamps: false,

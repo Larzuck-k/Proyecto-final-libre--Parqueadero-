@@ -128,7 +128,6 @@ export const actualizarUsuario = async (req, res) => {
         usuario.id_rol = id_rol || usuario.id_rol;
         usuario.updated_at = localNow;
         await usuario.save();
-        console.log(usuario);
         res.status(200).send({
           status: "success",
           mensaje: "Usuario actualizado exitosamente",

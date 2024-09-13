@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="/assets/vendors/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="/css/parking.css">
     @foreach(File::files(public_path('css')) as $file)
-        <link rel="stylesheet" href="{{ asset('css/' . $file->getFilename()) }}">
+    <link rel="stylesheet" href="{{ asset('css/' . $file->getFilename()) }}">
     @endforeach
 
 
@@ -23,39 +23,162 @@
 
 <body>
     <div id="app">
-        <x-navbar/>
+        <x-navbar />
         <div class="container-fluid page-body-wrapper ">
             <x-sidebar />
             <div class="p-3 table-container table-responsive text-center">
-            
-            <div class="row">
-            @for ($i = 0; $i < 200; $i++)
-                <div class="col-4 col-sm-3 col-md-2 col-lg-2 col-xxl-2 mb-4">
-                @if ($i % 7 == 0)
-                    <div class="rectangle-busy">
+                <div class="row mb-3">
+                    <div class="col text-center">
+                        <?php
+try {
+    $parqueaderos = file_get_contents(env("API_URL") . "/parqueadero/obtener");
+} catch (Exception $e) {
+    echo "<h1>Error al obtener los datos del parqueadero</h1>";
+}
+$dataParqueaderos = json_decode($parqueaderos, true);
 
+if ($dataParqueaderos == null) {
+    echo "<h1>Error al decodificar, el JSON no es válido</h1>";
+}
+        ?>
+                        <select class="form-select d-inline-block" id="selectParking" style="width: 50%;">
+                            @foreach ($dataParqueaderos as $parqueadero)
+                            <option value="{{ $parqueadero['id'] }}">{{ $parqueadero['nombre'] }}</option>
+                            @endforeach
+                        </select>
                     </div>
-                @else
-                        <div class="rectangle"></div>
-                    @endif
+                   
+                </div>
+                <div class="row" id="placeContainer"></div>
+            
 
-                </div>  
-            @endfor
-                </div>  
             </div>
+
 
         </div>
     </div>
 
 
-    
+    <!-- Modals -->
+        <!-- Modal -->
+        <div class="modal fade text-white text-start" id="ocuparEspacioModal" tabindex="-1" aria-labelledby="ocuparEspacioModal"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content bg-dark border-0">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5">Crear</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                <select class="form-select" id="spaceSelectOption">
+            <option value="0" selected>Seleccionar acción</opt>
+            <option value="1">Reservar espacio</option>
+            <option value="1">Ocupar espacio</option>
+            </select>
+            <form>
+
+            </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-success" data-bs-dismiss="modal">Enviar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- InfoModal -->
+        <div class="modal fade text-white text-start" id="infoModal" tabindex="-1" aria-labelledby="infoModal"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content bg-dark border-0">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5">Información del espacio</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
     <script src="/assets/vendors/js/vendor.bundle.base.js"></script>
 
     @foreach(File::files(public_path('js')) as $file)
-        <script src="{{ asset('js/' . $file->getFilename()) }}"></script>
+    <script src="{{ asset('js/' . $file->getFilename()) }}"></script>
     @endforeach
 
+    <script>
+        const placeContainer = document.querySelector("#placeContainer");
+        const selectParking = document.querySelector("#selectParking");
+        const spaceSelectOption =document.querySelector("#spaceSelectOption");
 
+        spaceSelectOption.addEventListener("change",()=>{
+            const ocuparEspacioModal = document.querySelector("#ocuparEspacioModal");
+            const formBodyModal = ocuparEspacioModal.querySelector("form");
+            console.log(formBodyModal);
+
+            if(spaceSelectOption.value == 1){
+                formBodyModal.innerHTML = `<label class="form-label my-3" for="name">Nombres</label>
+                <input type="text" class="form-control" name="name" placeholder="Buscar contratista o cliente">`;
+                const inputModal = formBodyModal.querySelector("input");
+                inputModal.addEventListener("input", () => {
+                    fetch("{{env("API_URL") . "/cliente_contratista/obtener/"}}"+inputModal.value).then(response => response.json())
+                        .then(data => {
+                            console.log(data);
+                        })
+                        .catch(error => {
+                            alert('Error al obtener los datos');
+                        });
+                });
+
+                
+            }
+            else if(spaceSelectOption.value == 2){
+
+            }
+        })
+        selectParking.addEventListener("change", () => {
+            initialData();
+        });
+
+        const initialData = () =>{
+            fetch("{{env("API_URL") . "/espacio/obtener/parking?id="}}" + selectParking.value, {})
+                .then(response => response.json())
+                .then(data => {
+
+                    if (data.length > 0) {
+                        placeContainer.innerHTML = "";
+
+                        data.forEach(e => {
+                            let stringPlace = "";
+                            stringPlace += `<div class="col-4 col-sm-3 col-md-2 col-lg-2 col-xxl-2 mb-4">`;
+                            if (e.estado == 'Disponible') {
+                                stringPlace += ` <div class="rectangle" data-id="${e.id}" data-bs-toggle="modal" data-bs-target="#ocuparEspacioModal" onclick="document.querySelector('#ocuparEspacioModal form').setAttribute('data-space-id', '${e.id}');"></div>`;
+
+                            }
+                            else {
+                                stringPlace += `<div class="rectangle-busy" data-id="${e.id}" data-bs-toggle="modal" data-bs-target="#infoModal" onclick="document.querySelector('#infoModal').setAttribute('data-space-id', '${e.id}');"></div>`;
+                            }
+                            stringPlace += "</div>";
+                            placeContainer.innerHTML += stringPlace;
+                        });
+                    } else {
+                        alert(
+                            "No hay espacios en este parqueadero"); // Display the error message from the API response
+                    }
+                })
+                .catch(error => {
+                    alert('Error al obtener los espacios por parqueadero');
+                });
+
+        }
+        initialData();
+    </script>
 </body>
 
 </html>

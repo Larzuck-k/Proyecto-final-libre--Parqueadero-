@@ -11,6 +11,7 @@
             transition: ease 0.5s;
             background-image: url("/assets/images/parking-images/parking-place.jpeg");
             background-size:cover;
+            overflow: hidden;
         }   
         .rectangle-busy{
              width: 100px;
@@ -26,6 +27,7 @@
             background-image: url("/assets/images/parking-images/parking-place.jpeg");
             background-size:cover;
             background-image: url("/assets/images/parking-images/parking-place-busy.jpeg");
+
         }
            .rectangle:hover, .rectangle-busy:hover {
             scale: 1.1;

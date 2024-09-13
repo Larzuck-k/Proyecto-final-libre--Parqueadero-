@@ -7,6 +7,7 @@ import Contrato from "../controllers/contrato.js";
 import contratos from "./contratos.js";
 import rol from "./rol.js";
 import usuario from "./usuario.js";
+import parqueadero from "./parqueadero.js";
 // Definir la asociación uno a uno
 Cliente.hasOne(Cliente_Contratista, {
   foreignKey: "id_cliente",
@@ -39,3 +40,8 @@ Espacio.belongsTo(tipo_ocupacion, {
   foreignKey: "id_tipo_ocupacion",
   as: "Tipo_Ocupacion",
 }); 
+
+Espacio.belongsTo(parqueadero,{
+  foreignKey:"id_parqueadero",
+  as:"parqueadero_table"
+})
