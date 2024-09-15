@@ -40,6 +40,7 @@ export default db.define(
         key: "id",
       },
       allowNull:false,
+      defaultValue: 2,
     },
     estado: {
       type: DataTypes.INTEGER,

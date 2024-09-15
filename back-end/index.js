@@ -16,6 +16,7 @@ import cnx from "./src/models/db.js";
 import cors from 'cors'
 import cliente_contratista from "./src/routes/cliente_contratista.js";
 // Modelos
+import "./src/models/sessions.js";
 import "./src/models/cliente_contratista.js";
 import "./src/models/cliente_normal.js";
 import "./src/models/contratista.js";

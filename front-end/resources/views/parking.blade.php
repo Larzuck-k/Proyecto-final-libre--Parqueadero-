@@ -127,9 +127,30 @@ if ($dataParqueaderos == null) {
                 <input type="text" class="form-control" name="name" placeholder="Buscar contratista o cliente">`;
                 const inputModal = formBodyModal.querySelector("input");
                 inputModal.addEventListener("input", () => {
-                    fetch("{{env("API_URL") . "/cliente_contratista/obtener/"}}"+inputModal.value).then(response => response.json())
+                    const inputValue = inputModal.value == "" ? "0" : inputModal.value;
+                    fetch("{{env("API_URL") . "/cliente_contratista/obtener/"}}"+inputValue).then(response => response.json())
                         .then(data => {
-                            console.log(data);
+                            if(data.clientes){
+                                const clientes = data.clientes;
+                                const contratistas = data.contratistas;
+                                let select = `<select id="clienteSeleccion" class="form-select mt-2">`;
+                                clientes.forEach((c)=>{
+                                    select += `<option value="${c.id}">${c.nombre} - Cliente</option>`;
+                                })
+                                 contratistas.forEach((c) => {
+                                    select += `<option value="${c.id}">${c.nombre} - Contratista</option>`;
+                                })
+                                select += "</select>";
+                                formBodyModal.innerHTML += select;
+                            }
+                            else{
+                                const select = document.querySelector("#clienteSeleccion");
+
+                                if (select){
+                                    select.remove();
+                                }
+                            }
+                            
                         })
                         .catch(error => {
                             alert('Error al obtener los datos');
