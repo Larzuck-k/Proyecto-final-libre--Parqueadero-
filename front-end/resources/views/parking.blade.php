@@ -75,9 +75,12 @@ if ($dataParqueaderos == null) {
                         <option value="1">Reservar espacio</option>
                         <option value="1">Ocupar espacio</option>
                     </select>
+                    <div class="d-none" id="searchContainer">
                     <label class="form-label my-3" for="name">Nombres</label>
-                    <input type="text" class="form-control d-none" name="name"
+                    <input type="text" class="form-control" name="name"
                         placeholder="Buscar contratista o cliente" id="search">
+                    </div>
+                    
                     <form>
 
                     </form>
@@ -119,14 +122,15 @@ if ($dataParqueaderos == null) {
         const placeContainer = document.querySelector("#placeContainer");
         const selectParking = document.querySelector("#selectParking");
         const spaceSelectOption = document.querySelector("#spaceSelectOption");
-
+        const ocuparEspacioModal = document.querySelector("#ocuparEspacioModal");
+        const formBodyModal = ocuparEspacioModal.querySelector("form");
+        const inputModal = document.querySelector("#search");
+        const searchContainer = inputModal.parentElement;
         spaceSelectOption.addEventListener("change", () => {
-            const ocuparEspacioModal = document.querySelector("#ocuparEspacioModal");
-            const formBodyModal = ocuparEspacioModal.querySelector("form");
-            let inputModal = document.querySelector("#search");
+
             if (spaceSelectOption.value == 1) {
-                inputModal.classList.toggle("d-none");
-                if (!inputModal) {
+                searchContainer.classList.remove("d-none");
+                if (inputModal) {
                     inputModal.addEventListener("input", () => {
                         const inputValue = inputModal.value == "" ? "0" : inputModal.value;
                         fetch("{{env("API_URL") . "/cliente_contratista/obtener/"}}" + inputValue).then(response => response.json())
@@ -134,7 +138,11 @@ if ($dataParqueaderos == null) {
                                 if (data.clientes) {
                                     const clientes = data.clientes;
                                     const contratistas = data.contratistas;
-                                    let select = `<select id="clienteSeleccion" class="form-select mt-2">`;
+                                    let select = document.querySelector("#clienteSeleccion");
+                                    if(select){
+                                        select.remove();
+                                    }
+                                    select = `<select id="clienteSeleccion" class="form-select mt-2">`;
                                     clientes.forEach((c) => {
                                         select += `<option value="${c.id}">${c.nombre} - Cliente</option>`;
                                     })
@@ -161,11 +169,16 @@ if ($dataParqueaderos == null) {
                 }
             }
             else if (spaceSelectOption.value == 2) {
-                inputModal.classList.toggle("d-none");
+                searchContainer.classList.remove("d-none");
                 formBodyModal.innerHTML = "";
             }
             else {
-                inputModal.classList.toggle("d-none");
+                searchContainer.classList.add("d-none");
+                let select = document.querySelector("#clienteSeleccion");
+                if(select){
+                  select.remove();
+                }
+                inputModal.value = "";
             }
         })
         selectParking.addEventListener("change", () => {
@@ -210,21 +223,6 @@ if ($dataParqueaderos == null) {
             const infoModal = document.querySelector('#infoModal');
             if (number == 1) {
                 ocuparEspacioModal.setAttribute('data-space-id', id);
-                ocuparEspacioModal.querySelector(".modal-body").querySelectorAll("*").forEach((e) => {
-
-                    if (e.attributes.id) {
-                        console.log(e.nodeName);
-                        e.attributes.id.value == "spaceSelectOption" ? "" : e.remove();
-                    }
-                    else {
-
-                        e.remove();
-                    }
-
-                });
-                document.querySelector("#spaceSelectOption").innerHTML = `<option value="0" selected>Seleccionar acción</option>
-                        <option value="1">Reservar espacio</option>
-                        <option value="1">Ocupar espacio</option>`;
             }
             else if (number == 2) {
                 infoModal.setAttribute('data-space-id', id);
