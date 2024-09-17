@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="/assets/vendors/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="/css/parking.css">
     @foreach(File::files(public_path('css')) as $file)
-    <link rel="stylesheet" href="{{ asset('css/' . $file->getFilename()) }}">
+        <link rel="stylesheet" href="{{ asset('css/' . $file->getFilename()) }}">
     @endforeach
 
 
@@ -43,14 +43,14 @@ if ($dataParqueaderos == null) {
         ?>
                         <select class="form-select d-inline-block" id="selectParking" style="width: 50%;">
                             @foreach ($dataParqueaderos as $parqueadero)
-                            <option value="{{ $parqueadero['id'] }}">{{ $parqueadero['nombre'] }}</option>
+                                <option value="{{ $parqueadero['id'] }}">{{ $parqueadero['nombre'] }}</option>
                             @endforeach
                         </select>
                     </div>
-                   
+
                 </div>
                 <div class="row" id="placeContainer"></div>
-            
+
 
             </div>
 
@@ -60,114 +60,119 @@ if ($dataParqueaderos == null) {
 
 
     <!-- Modals -->
-        <!-- Modal -->
-        <div class="modal fade text-white text-start" id="ocuparEspacioModal" tabindex="-1" aria-labelledby="ocuparEspacioModal"
-            aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content bg-dark border-0">
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5">Crear</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                <select class="form-select" id="spaceSelectOption">
-            <option value="0" selected>Seleccionar acción</opt>
-            <option value="1">Reservar espacio</option>
-            <option value="1">Ocupar espacio</option>
-            </select>
-            <form>
+    <!-- Modal -->
+    <div class="modal fade text-white text-start" id="ocuparEspacioModal" tabindex="-1"
+        aria-labelledby="ocuparEspacioModal" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content bg-dark border-0">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5">Crear</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <select class="form-select" id="spaceSelectOption">
+                        <option value="0" selected>Seleccionar acción</option>
+                        <option value="1">Reservar espacio</option>
+                        <option value="1">Ocupar espacio</option>
+                    </select>
+                    <label class="form-label my-3" for="name">Nombres</label>
+                    <input type="text" class="form-control d-none" name="name"
+                        placeholder="Buscar contratista o cliente" id="search">
+                    <form>
 
-            </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                        <button type="button" class="btn btn-success" data-bs-dismiss="modal">Enviar</button>
-                    </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">Enviar</button>
                 </div>
             </div>
         </div>
-        <!-- InfoModal -->
-        <div class="modal fade text-white text-start" id="infoModal" tabindex="-1" aria-labelledby="infoModal"
-            aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content bg-dark border-0">
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5">Información del espacio</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    </div>
+    </div>
+    <!-- InfoModal -->
+    <div class="modal fade text-white text-start" id="infoModal" tabindex="-1" aria-labelledby="infoModal"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content bg-dark border-0">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5">Información del espacio</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                 </div>
             </div>
         </div>
+    </div>
 
-        
+
     <script src="/assets/vendors/js/vendor.bundle.base.js"></script>
 
     @foreach(File::files(public_path('js')) as $file)
-    <script src="{{ asset('js/' . $file->getFilename()) }}"></script>
+        <script src="{{ asset('js/' . $file->getFilename()) }}"></script>
     @endforeach
 
     <script>
         const placeContainer = document.querySelector("#placeContainer");
         const selectParking = document.querySelector("#selectParking");
-        const spaceSelectOption =document.querySelector("#spaceSelectOption");
+        const spaceSelectOption = document.querySelector("#spaceSelectOption");
 
-        spaceSelectOption.addEventListener("change",()=>{
+        spaceSelectOption.addEventListener("change", () => {
             const ocuparEspacioModal = document.querySelector("#ocuparEspacioModal");
             const formBodyModal = ocuparEspacioModal.querySelector("form");
-            console.log(formBodyModal);
-
-            if(spaceSelectOption.value == 1){
-                formBodyModal.innerHTML = `<label class="form-label my-3" for="name">Nombres</label>
-                <input type="text" class="form-control" name="name" placeholder="Buscar contratista o cliente">`;
-                const inputModal = formBodyModal.querySelector("input");
-                inputModal.addEventListener("input", () => {
-                    const inputValue = inputModal.value == "" ? "0" : inputModal.value;
-                    fetch("{{env("API_URL") . "/cliente_contratista/obtener/"}}"+inputValue).then(response => response.json())
-                        .then(data => {
-                            if(data.clientes){
-                                const clientes = data.clientes;
-                                const contratistas = data.contratistas;
-                                let select = `<select id="clienteSeleccion" class="form-select mt-2">`;
-                                clientes.forEach((c)=>{
-                                    select += `<option value="${c.id}">${c.nombre} - Cliente</option>`;
-                                })
-                                 contratistas.forEach((c) => {
-                                    select += `<option value="${c.id}">${c.nombre} - Contratista</option>`;
-                                })
-                                select += "</select>";
-                                formBodyModal.innerHTML += select;
-                            }
-                            else{
-                                const select = document.querySelector("#clienteSeleccion");
-
-                                if (select){
-                                    select.remove();
+            let inputModal = document.querySelector("#search");
+            if (spaceSelectOption.value == 1) {
+                inputModal.classList.toggle("d-none");
+                if (!inputModal) {
+                    inputModal.addEventListener("input", () => {
+                        const inputValue = inputModal.value == "" ? "0" : inputModal.value;
+                        fetch("{{env("API_URL") . "/cliente_contratista/obtener/"}}" + inputValue).then(response => response.json())
+                            .then(data => {
+                                if (data.clientes) {
+                                    const clientes = data.clientes;
+                                    const contratistas = data.contratistas;
+                                    let select = `<select id="clienteSeleccion" class="form-select mt-2">`;
+                                    clientes.forEach((c) => {
+                                        select += `<option value="${c.id}">${c.nombre} - Cliente</option>`;
+                                    })
+                                    contratistas.forEach((c) => {
+                                        select += `<option value="${c.id}">${c.nombre} - Contratista</option>`;
+                                    })
+                                    select += "</select>";
+                                    formBodyModal.innerHTML += select;
                                 }
-                            }
-                            
-                        })
-                        .catch(error => {
-                            alert('Error al obtener los datos');
-                        });
-                });
+                                else {
+                                    const select = document.querySelector("#clienteSeleccion");
 
-                
+                                    if (select) {
+                                        console.log("");
+                                        select.remove();
+                                    }
+                                }
+
+                            })
+                            .catch(error => {
+                                alert('Error al obtener los datos');
+                            });
+                    });
+                }
             }
-            else if(spaceSelectOption.value == 2){
-
+            else if (spaceSelectOption.value == 2) {
+                inputModal.classList.toggle("d-none");
+                formBodyModal.innerHTML = "";
+            }
+            else {
+                inputModal.classList.toggle("d-none");
             }
         })
         selectParking.addEventListener("change", () => {
             initialData();
         });
 
-        const initialData = () =>{
+        const initialData = () => {
             fetch("{{env("API_URL") . "/espacio/obtener/parking?id="}}" + selectParking.value, {})
                 .then(response => response.json())
                 .then(data => {
@@ -179,11 +184,11 @@ if ($dataParqueaderos == null) {
                             let stringPlace = "";
                             stringPlace += `<div class="col-4 col-sm-3 col-md-2 col-lg-2 col-xxl-2 mb-4">`;
                             if (e.estado == 'Disponible') {
-                                stringPlace += ` <div class="rectangle" data-id="${e.id}" data-bs-toggle="modal" data-bs-target="#ocuparEspacioModal" onclick="document.querySelector('#ocuparEspacioModal form').setAttribute('data-space-id', '${e.id}');"></div>`;
+                                stringPlace += ` <div class="rectangle" data-bs-toggle="modal" data-bs-target="#ocuparEspacioModal" onclick="openModal(1,${e.id})"></div>`;
 
                             }
                             else {
-                                stringPlace += `<div class="rectangle-busy" data-id="${e.id}" data-bs-toggle="modal" data-bs-target="#infoModal" onclick="document.querySelector('#infoModal').setAttribute('data-space-id', '${e.id}');"></div>`;
+                                stringPlace += `<div class="rectangle-busy" data-bs-toggle="modal" data-bs-target="#infoModal" onclick="openModal(2,${e.id})"></div>`;
                             }
                             stringPlace += "</div>";
                             placeContainer.innerHTML += stringPlace;
@@ -199,6 +204,33 @@ if ($dataParqueaderos == null) {
 
         }
         initialData();
+
+        const openModal = (number, element, id) => {
+            const ocuparEspacioModal = document.querySelector('#ocuparEspacioModal');
+            const infoModal = document.querySelector('#infoModal');
+            if (number == 1) {
+                ocuparEspacioModal.setAttribute('data-space-id', id);
+                ocuparEspacioModal.querySelector(".modal-body").querySelectorAll("*").forEach((e) => {
+
+                    if (e.attributes.id) {
+                        console.log(e.nodeName);
+                        e.attributes.id.value == "spaceSelectOption" ? "" : e.remove();
+                    }
+                    else {
+
+                        e.remove();
+                    }
+
+                });
+                document.querySelector("#spaceSelectOption").innerHTML = `<option value="0" selected>Seleccionar acción</option>
+                        <option value="1">Reservar espacio</option>
+                        <option value="1">Ocupar espacio</option>`;
+            }
+            else if (number == 2) {
+                infoModal.setAttribute('data-space-id', id);
+            }
+
+        }
     </script>
 </body>
 
