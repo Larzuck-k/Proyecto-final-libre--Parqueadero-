@@ -597,7 +597,7 @@ if (empty($data)) {
             }
         }
 
-        var updateUrl = '<?php    echo str_replace('estado', 'editar', $updateUrl); ?>';
+        var updateUrl = '<?php echo str_replace('estado', 'editar', $updateUrl); ?>';
 
         fetch(updateUrl, {
             method: 'PUT',
@@ -609,13 +609,34 @@ if (empty($data)) {
             .then(response => response.json())
             .then(data => {
                 if (data.status === 'success') {
-                    location.reload();
+                     Swal.fire({
+                        position: "center",
+                        icon:  data.status,
+                        title: data.mensaje,
+                        showConfirmButton: false,
+                        timer: 1500 
+                                 }).then(()=>{
+                        location.reload();
+                                 });
                 } else {
-                    alert(data.mensaje); // Display the error message from the API response
+                Swal.fire({
+                position: "center",
+                icon: "error",
+                title: data.mensaje,
+                showConfirmButton: false,
+                timer: 1500 
+                }); // Display the error message from the API response
                 }
             })
             .catch(error => {
-                alert('Error al editar el registro');
+                console.error(error);
+               Swal.fire({
+                position: "center",
+                icon: "error",
+                title: error,
+                showConfirmButton: false,
+                timer: 1500 
+                }); 
             });
 
         // Ocultar el modal
@@ -894,9 +915,9 @@ if (empty($data)) {
         var formData = {};
         var inputs = createForm.querySelectorAll('input, select');
         inputs.forEach(input => {
-            if (input.name !== "password" || input.value !== "") {
+
                 formData[input.name] = input.value;
-            }
+          
         });
 
         var createUrl = '<?php    echo str_replace('obtener', 'crear', $apiUrl); ?>';
@@ -910,13 +931,36 @@ if (empty($data)) {
             .then(response => response.json())
             .then(data => {
                 if (data.status === 'success') {
-                    location.reload();
+                    Swal.fire({
+                        position: "center",
+                        icon:  data.status,
+                        title: data.mensaje,
+                        showConfirmButton: false,
+                        timer: 1500 
+                                 }).then(()=>{
+                        location.reload();
+                                 });
+                    
                 } else {
-                    alert(data.mensaje); // Display the error message from the API response
+
+                Swal.fire({
+                position: "center",
+                icon: "error",
+                title: data.mensaje,
+                showConfirmButton: false,
+                timer: 1500 
+                }); // Display the error message from the API response
                 }
             })
             .catch(error => {
-                alert('Error al crear el registro');
+                console.error(error);
+                Swal.fire({
+                position: "center",
+                icon: "error",
+                title: error,
+                showConfirmButton: false,
+                timer: 1500 
+                });
             });
 
         // Close the modal

@@ -3,10 +3,10 @@ import ClienteNormal from "../models/cliente_normal.js";
 import db from "../models/db.js";
 
 // Crear un nuevo cliente normal
-export const crearClienteNormal = async (req, res) => {
+export const crearClienteNormal = async (req, res, next) => {
   const transaction = await db.transaction();
   try {
-    const { nombre, email, telefono,ultima_visita } = req.body; 
+    const { nombre, email, telefono, ultima_visita } = req.body;
     const nuevoCliente = await ClienteNormal.create(
       {
         nombre,
@@ -19,32 +19,38 @@ export const crearClienteNormal = async (req, res) => {
     const nuevoClienteId = nuevoCliente.id;
 
     // Crear la relación con la tabla Cliente_Contratista
-    await Cliente_Contratista.create({
-      id_cliente: nuevoClienteId,
-      id_contratista: null,
-      estado: 1,
-    },{transaction});
+    await Cliente_Contratista.create(
+      {
+        id_cliente: nuevoClienteId,
+        id_contratista: null,
+        estado: 1,
+      },
+      { transaction }
+    );
 
-    transaction.commit();
+    await transaction.commit();
     res.status(200).send({
       status: "success",
       mensaje: "Cliente creado exitosamente",
       cliente: nuevoCliente,
     });
   } catch (error) {
-    transaction.rollback();
-    res.status(400).send({
-      status: "error",
-      mensaje: "Error al crear el cliente: " + error,
-    });
+    await transaction.rollback();
+    next(error);
   }
 };
 
 // Cambiar estado de un cliente normal
-export const cambiarEstado = async (req, res) => {
+export const cambiarEstado = async (req, res, next) => {
   try {
     const { id } = req.body;
-    const cliente = await ClienteNormal.findByPk(id,{include:{model:Cliente_Contratista,attributes:["id","estado"],as:"Cliente_Contratista_Cliente"}});
+    const cliente = await ClienteNormal.findByPk(id, {
+      include: {
+        model: Cliente_Contratista,
+        attributes: ["id", "estado"],
+        as: "Cliente_Contratista_Cliente",
+      },
+    });
 
     if (cliente && cliente.Cliente_Contratista_Cliente) {
       const clienteContratista = cliente.Cliente_Contratista_Cliente; // Asume que es un objeto, no un array
@@ -66,15 +72,12 @@ export const cambiarEstado = async (req, res) => {
       });
     }
   } catch (error) {
-    res.status(400).send({
-      status: "error",
-      mensaje: "Error al cambiar el estado: " + error,
-    });
+    next(error);
   }
 };
 
 // Obtener todos los clientes normales
-export const obtenerClientesNormales = async (req, res) => {
+export const obtenerClientesNormales = async (req, res, next) => {
   try {
     // Realizar la consulta con la inclusión
     const clientes = await ClienteNormal.findAll({
@@ -112,15 +115,12 @@ export const obtenerClientesNormales = async (req, res) => {
       res.status(200).send(transformedClientes);
     }
   } catch (error) {
-    res.status(400).send({
-        status: "error",
-        mensaje: "Error al obtener los clientes: " + error
-    });
-}
+    next(error);
+  }
 };
 
 // Actualizar un cliente normal
-export const actualizarClienteNormal = async (req, res) => {
+export const actualizarClienteNormal = async (req, res, next) => {
   try {
     const { id } = req.body;
     const { nombre, email, telefono } = req.body;
@@ -142,15 +142,12 @@ export const actualizarClienteNormal = async (req, res) => {
       });
     }
   } catch (error) {
-    res.status(400).send({
-      status: "error",
-      mensaje: "Error al actualizar el cliente: " + error,
-    });
+    next(error);
   }
 };
 
 // Eliminar un cliente normal
-export const eliminarClienteNormal = async (req, res) => {
+export const eliminarClienteNormal = async (req, res, next) => {
   try {
     const { id } = req.body;
     const cliente = await ClienteNormal.findByPk(id);
@@ -168,10 +165,7 @@ export const eliminarClienteNormal = async (req, res) => {
       });
     }
   } catch (error) {
-    res.status(400).send({
-      status: "error",
-      mensaje: "Error al eliminar el cliente: " + error,
-    });
+    next(error);
   }
 };
 export default ClienteNormal;

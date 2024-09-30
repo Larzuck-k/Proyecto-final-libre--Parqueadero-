@@ -33,6 +33,9 @@ Route::middleware(['auth', 'status'])->group(function () {
     Route::get('/parking', function () {
         return view('parking');
     })->name('parking');
+     Route::get('/facturacion', function () {
+        return view('facturacion');
+    })->name('facturacion');
 });
 
 

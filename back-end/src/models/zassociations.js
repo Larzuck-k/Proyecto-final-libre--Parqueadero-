@@ -14,34 +14,34 @@ Cliente.hasOne(Cliente_Contratista, {
   as: "Cliente_Contratista_Cliente",
 });
 Cliente_Contratista.belongsTo(Cliente, {
-  foreignKey: "id_cliente", as:"Cliente_Contratista_Cliente"
+  foreignKey: "id_cliente",
+  as: "Cliente_Contratista_Cliente",
 });
 // Definir la asociación uno a uno
 Contratista.hasOne(Cliente_Contratista, {
-  foreignKey: "id_contratista", as:"Cliente_Contratista_Contratista"
+  foreignKey: "id_contratista",
+  as: "Cliente_Contratista_Contratista",
 });
 Cliente_Contratista.belongsTo(Contratista, {
   foreignKey: "id_contratista",
   as: "Cliente_Contratista_Contratista",
 });
 
-
 // Definir la asociación uno a uno
 
 Contrato.belongsTo(contratos, {
   foreignKey: "id_contratos",
-  as:"Contratos"
+  as: "Contratos",
 });
 
-usuario.belongsTo(rol,{foreignKey:"id_rol",as: "Rol"
-})
+usuario.belongsTo(rol, { foreignKey: "id_rol", as: "Rol" });
 
 Espacio.belongsTo(tipo_ocupacion, {
   foreignKey: "id_tipo_ocupacion",
   as: "Tipo_Ocupacion",
-}); 
+});
 
-Espacio.belongsTo(parqueadero,{
-  foreignKey:"id_parqueadero",
-  as:"parqueadero_table"
-})
+Espacio.belongsTo(parqueadero, {
+  foreignKey: "id_parqueadero",
+  as: "parqueadero_table",
+});

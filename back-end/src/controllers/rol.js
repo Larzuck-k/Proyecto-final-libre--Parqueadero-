@@ -1,8 +1,7 @@
-import Rol from '../models/rol.js';
-
+import Rol from "../models/rol.js";
 
 // Crear un nuevo rol
-// export const crearRol = async (req, res) => {
+// export const crearRol = async (req, res, next) => {
 //     try {
 //         const { nombre } = req.body;
 //         const nuevoRol = await Rol.create({ nombre });
@@ -20,27 +19,26 @@ import Rol from '../models/rol.js';
 // };
 
 // Obtener todos los roles
-export const obtenerRoles = async (req, res) => {
+export const obtenerRoles = async (req, res, next) => {
   try {
     const rol = await Rol.findAll();
     if (rol.length === 0) {
-        const columnNames = Object.keys(Rol.getAttributes());
-        const emptyObject = columnNames.reduce((acc, curr) => ({ ...acc, [curr]: "" }), {});
-        res.status(200).send([emptyObject]);
+      const columnNames = Object.keys(Rol.getAttributes());
+      const emptyObject = columnNames.reduce(
+        (acc, curr) => ({ ...acc, [curr]: "" }),
+        {}
+      );
+      res.status(200).send([emptyObject]);
     } else {
-        res.status(200).send(rol);
+      res.status(200).send(rol);
     }
-} catch (error) {
-    res.status(400).send({
-        status: "error",
-        mensaje: "Error al obtener los rol: " + error
-    });
-}
+  } catch (error) {
+    next(error);
+  }
 };
 
-
 // Eliminar un rol
-// export const eliminarRol = async (req, res) => {
+// export const eliminarRol = async (req, res, next) => {
 //     try {
 //       const { id } = req.params;
 //       const rol = await Rol.findByPk(id);
@@ -65,7 +63,7 @@ export const obtenerRoles = async (req, res) => {
 //   };
 
 // Editar un rol
-// export const editarRol = async (req, res) => {
+// export const editarRol = async (req, res, next) => {
 //   try {
 //     const { id } = req.body;
 //     const { nombre } = req.body;
@@ -92,7 +90,7 @@ export const obtenerRoles = async (req, res) => {
 // };
 
 // Cambiar estado de un rol
-// export const cambiarEstadoRol = async (req, res) => {
+// export const cambiarEstadoRol = async (req, res, next) => {
 //   try {
 //     const { id } = req.body;
 
@@ -120,4 +118,4 @@ export const obtenerRoles = async (req, res) => {
 //   }
 // };
 
-  export default Rol
+export default Rol;

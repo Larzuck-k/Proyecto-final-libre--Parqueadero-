@@ -35,9 +35,13 @@ import "./src/models/tipo_ocupacion.js";
 import "./src/models/usuario.js";
 import "./src/models/zassociations.js";
 
+// Middlewares
+import errorHandleMiddleware from "./src/middlewares/errorHandleMiddleware.js";
+
 import bodyparser from "body-parser";
 
 import dotenv from "dotenv";
+import validarDatos from "./src/middlewares/validarDatos.js";
 
 dotenv.config({ path: "././.env" });
 
@@ -67,7 +71,7 @@ app.use(cors());
 
 app.use(bodyparser.urlencoded({ extended: true }));
 app.use(bodyparser.json());
-
+app.use(validarDatos);
 app.use(detallefactura);
 app.use(espacio);
 app.use(tipo_ocupacion);
@@ -81,7 +85,7 @@ app.use(contrato);
 app.use(contratos);
 app.use(clientenormal);
 app.use(cliente_contratista);
-
+app.use(errorHandleMiddleware);
 app.server = app.listen(port, () => {
   console.log(`Server ejecutandose en ${port}...`);
 });

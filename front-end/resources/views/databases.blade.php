@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="/assets/vendors/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="/assets/vendors/font-awesome/css/font-awesome.min.css" />
     <link rel="stylesheet" href="/assets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@4/dark.css" rel="stylesheet">
     @foreach(File::files(public_path('css')) as $file)
     <link rel="stylesheet" href="{{ asset('css/' . $file->getFilename()) }}">
     @endforeach
@@ -44,7 +45,7 @@
     <script src="/assets/vendors/js/vendor.bundle.base.js"></script>
     <script src="/assets/vendors/chart.js/chart.umd.js"></script>
     <script src="/assets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
     @foreach(File::files(public_path('js')) as $file)
     <script src="{{ asset('js/' . $file->getFilename()) }}"></script>
     @endforeach

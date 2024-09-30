@@ -1,14 +1,16 @@
 import { Router } from "express";
 import {
-    crearContrato,
+  crearContrato,
   obtenerContratos,
+  obtenerContrato,
   eliminarContrato,
   actualizarContrato,
-cambiarEstado
+  cambiarEstado,
 } from "../controllers/contrato.js";
 const contrato = Router();
 contrato.post("/contrato/crear", crearContrato);
 contrato.get("/contrato/obtener", obtenerContratos);
+contrato.get("/contrato/obtener/single", obtenerContrato);
 contrato.delete("/contrato/eliminar", eliminarContrato);
 contrato.put("/contrato/editar", actualizarContrato);
 contrato.post("/contrato/estado", cambiarEstado);

@@ -80,9 +80,14 @@
 
             </div>
         </li>
+    <li class="nav-item">
+            <a class="nav-link" href="/parking">
+                <span class="menu-title">Parqueadero</span>
+                <i class="mdi mdi-car menu-icon"></i>
+            </a>
+        </li>
 
-
-        <li class="nav-item">
+        {{-- <li class="nav-item">
             <a class="nav-link" data-bs-toggle="collapse" href="#charts" aria-expanded="false" aria-controls="charts">
                 <span class="menu-title">Informes</span>
                 <i class="mdi mdi-chart-bar menu-icon"></i>
@@ -94,7 +99,12 @@
                     </li>
                 </ul>
             </div>
+        </li> --}}
+        <li class="nav-item">
+            <a class="nav-link" href="/facturacion">
+                <span class="menu-title">Facturación</span>
+                <i class="mdi mdi-cash-register menu-icon"></i>
+            </a>
         </li>
-
     </ul>
 </nav>
