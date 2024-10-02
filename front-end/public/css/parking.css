@@ -45,3 +45,8 @@
 .rectangle-busy:hover {
     scale: 1.1;
 }
+.dt-paging-button {
+    margin: 0.5px !important;
+    padding: 0.5px !important;
+    scale: 0.8;
+}

@@ -136,26 +136,4 @@ export const actualizarUsuario = async (req, res, next) => {
   }
 };
 
-// Eliminar un usuario
-export const eliminarUsuario = async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    const usuario = await Usuario.findByPk(id);
-
-    if (usuario) {
-      await usuario.destroy();
-      res.status(200).send({
-        status: "success",
-        mensaje: "Usuario eliminado exitosamente",
-      });
-    } else {
-      res.status(404).send({
-        status: "error",
-        mensaje: "Usuario no encontrado",
-      });
-    }
-  } catch (error) {
-    next(error);
-  }
-};
 export default Usuario;

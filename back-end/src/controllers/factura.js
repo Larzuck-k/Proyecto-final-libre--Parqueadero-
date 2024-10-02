@@ -105,26 +105,4 @@ export const actualizarFactura = async (req, res, next) => {
   }
 };
 
-// Eliminar una factura
-export const eliminarFactura = async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    const factura = await Factura.findByPk(id);
-
-    if (factura) {
-      await factura.destroy();
-      res.status(200).send({
-        status: "success",
-        mensaje: "Factura eliminada exitosamente",
-      });
-    } else {
-      res.status(404).send({
-        status: "error",
-        mensaje: "Factura no encontrada",
-      });
-    }
-  } catch (error) {
-    next(error);
-  }
-};
 export default Factura;

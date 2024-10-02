@@ -1,16 +1,15 @@
 import { Router } from "express";
 import {
-   crearContratista ,
+  crearContratista,
   obtenerContratistas,
-  eliminarContratista,
   actualizarContratista,
-  cambiarEstado
-
+  cambiarEstado,
+  obtenerContratistaByPk,
 } from "../controllers/contratista.js";
 const contratista = Router();
 contratista.post("/contratista/crear", crearContratista);
 contratista.get("/contratista/obtener", obtenerContratistas);
-contratista.delete("/contratista/eliminar", eliminarContratista);
+contratista.get("/contratista/obtener/single", obtenerContratistaByPk);
 contratista.put("/contratista/editar", actualizarContratista);
 contratista.post("/contratista/estado", cambiarEstado);
 

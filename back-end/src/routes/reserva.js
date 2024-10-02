@@ -1,12 +1,14 @@
 import { Router } from "express";
 import {
-    obtenerReservas,
+  obtenerReservas,
   crearReserva,
+  cambiarEstado,
 } from "../controllers/reserva.js";
-const reserva = Router();
 
+const reserva = Router();
 
 reserva.post("/reserva/crear", crearReserva);
 reserva.get("/reserva/obtener", obtenerReservas);
+reserva.post("/reserva/estado", cambiarEstado);
 
 export default reserva;

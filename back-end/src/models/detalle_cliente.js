@@ -1,45 +1,42 @@
 import { DataTypes } from "sequelize";
 import db from "./db.js";
-import Espacio from "./espacio.js";
-import Contratista from "./contratista.js";
+import espacio from "./espacio.js";
 
-export default db.define(
-  "Contrato",
+const Detalle_Cliente = db.define(
+  "Detalle_Cliente",
   {
     id: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true,
     },
-    fecha_inicio: {
+    placa: {
+      type: DataTypes.STRING(8),
+      allowNull: false,
+    },
+    hora_entrada: {
       type: DataTypes.DATE,
       allowNull: false,
     },
-    fecha_fin: {
+    hora_salida: {
       type: DataTypes.DATE,
-      allowNull: false,
-    },
-    id_contratista: {
-      type: DataTypes.INTEGER,
-      references: {
-        model: Contratista,
-        key: "id",
-      },
     },
     id_espacio: {
       type: DataTypes.UUID,
       references: {
-        model: Espacio,
+        model: espacio,
         key: "id",
       },
     },
-    estado: {
+    id_cliente: {
       type: DataTypes.INTEGER,
-      defaultValue: 1,
+      defaultValue: 9999,
     },
   },
   {
-    tableName: "Contrato",
+    tableName: "Detalle_Cliente",
     timestamps: false,
   }
 );
+
+export default Detalle_Cliente;

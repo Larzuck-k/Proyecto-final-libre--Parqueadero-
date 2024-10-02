@@ -1,41 +1,25 @@
-import Cliente_Contratista from "../models/cliente_contratista.js";
+import { Op } from "sequelize";
 import Contratista from "../models/contratista.js";
-import db from "../models/db.js";
 
 // Crear un nuevo contratista
 export const crearContratista = async (req, res, next) => {
-  const transaction = await db.transaction();
   try {
-    const { nombre, email, telefono, id_usuario } = req.body;
+    const { identificacion, nombre, email, telefono, id_usuario } = req.body;
 
-    const nuevoContratista = await Contratista.create(
-      {
-        nombre,
-        email,
-        telefono,
-        id_usuario,
-      },
-      { transaction }
-    );
-    const nuevoContratistaId = nuevoContratista.id;
+    const nuevoContratista = await Contratista.create({
+      identificacion,
+      nombre,
+      email,
+      telefono,
+      id_usuario,
+    });
 
-    await Cliente_Contratista.create(
-      {
-        id_usuario: null,
-        id_contratista: nuevoContratistaId,
-        estado: 1,
-      },
-      { transaction }
-    );
-
-    await transaction.commit();
     res.status(200).send({
       status: "success",
       mensaje: "Contratista creado exitosamente",
       contratista: nuevoContratista,
     });
   } catch (error) {
-    await transaction.rollback();
     next(error);
   }
 };
@@ -43,23 +27,12 @@ export const crearContratista = async (req, res, next) => {
 export const cambiarEstado = async (req, res, next) => {
   try {
     const { id } = req.body;
-    const contratista = await Contratista.findByPk(id, {
-      include: {
-        model: Cliente_Contratista,
-        attributes: ["id", "estado"],
-        as: "Cliente_Contratista_Contratista",
-      },
-    });
+    const contratista = await Contratista.findByPk(id);
 
-    if (contratista && contratista.Cliente_Contratista_Contratista) {
-      const clienteContratista = contratista.Cliente_Contratista_Contratista; // Asume que es un objeto, no un array
-      const estadoActual = clienteContratista.estado;
-      const nuevoEstado = estadoActual === 0 ? 1 : 0;
-      clienteContratista.estado = nuevoEstado;
-
-      // Guardar los cambios en la tabla Cliente_Contratista
-      console.log(clienteContratista);
-      await clienteContratista.save();
+    if (contratista) {
+      contratista.estado = contratista.estado == 1 ? 0 : 1;
+      // Guardar los cambios
+      await contratista.save();
       res.status(200).send({
         status: "success",
         mensaje: "Se ha actualizado el actualizado exitosamente",
@@ -78,37 +51,39 @@ export const cambiarEstado = async (req, res, next) => {
 // Obtener todos los contratistas
 export const obtenerContratistas = async (req, res, next) => {
   try {
-    const contratistas = await Contratista.findAll({
-      include: {
-        model: Cliente_Contratista,
-        attributes: ["estado"],
-        as: "Cliente_Contratista_Contratista",
-      },
-    });
+    const contratistas = await Contratista.findAll();
 
     if (contratistas.length === 0) {
       const columnNames = Object.keys(Contratista.getAttributes());
-      columnNames.push("estado");
       const emptyObject = columnNames.reduce(
         (acc, curr) => ({ ...acc, [curr]: "" }),
         {}
       );
       res.status(200).send([emptyObject]);
     } else {
-      // Transformar los datos para aplanar el objeto Cliente_Contratista_Cliente
-      const transformedContratistas = contratistas.map((contratista) => {
-        // Convertir el cliente en un objeto simple
-        const contratistaData = contratista.toJSON();
+      res.status(200).send(contratistas);
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+// Obtener todos los contratistas
+export const obtenerContratistaByPk = async (req, res, next) => {
+  try {
+    const parametro = req.query.parametro;
+    const contratista = await Contratista.findAll({
+      where: {
+        [Op.or]: {
+          identificacion: parametro,
+          nombre: { [Op.like]: "%" + parametro + "%" },
+        },
+      },
+    });
 
-        // Extraer el estado y eliminar la propiedad anidada
-        if (contratistaData.Cliente_Contratista_Contratista) {
-          contratistaData.estado =
-            contratistaData.Cliente_Contratista_Contratista.estado;
-          delete contratistaData.Cliente_Contratista_Contratista;
-        }
-        return contratistaData;
-      });
-      res.status(200).send(transformedContratistas);
+    if (contratista.length == 0) {
+      res.status(200).send([]);
+    } else {
+      res.status(200).send(contratista);
     }
   } catch (error) {
     next(error);
@@ -119,10 +94,11 @@ export const obtenerContratistas = async (req, res, next) => {
 export const actualizarContratista = async (req, res, next) => {
   try {
     const { id } = req.body;
-    const { nombre, email, telefono, id_usuario } = req.body;
+    const { identificacion, nombre, email, telefono, id_usuario } = req.body;
     const contratista = await Contratista.findByPk(id);
 
     if (contratista) {
+      contratista.identificacion = identificacion || contratista.identificacion;
       contratista.nombre = nombre || contratista.nombre;
       contratista.email = email || contratista.email;
       contratista.telefono = telefono || contratista.telefono;
@@ -143,26 +119,4 @@ export const actualizarContratista = async (req, res, next) => {
   }
 };
 
-// Eliminar un contratista
-export const eliminarContratista = async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    const contratista = await Contratista.findByPk(id);
-
-    if (contratista) {
-      await contratista.destroy();
-      res.status(200).send({
-        status: "success",
-        mensaje: "Contratista eliminado exitosamente",
-      });
-    } else {
-      res.status(404).send({
-        status: "error",
-        mensaje: "Contratista no encontrado",
-      });
-    }
-  } catch (error) {
-    next(error);
-  }
-};
 export default Contratista;

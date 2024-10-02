@@ -92,26 +92,4 @@ export const actualizarParqueadero = async (req, res, next) => {
   }
 };
 
-// Eliminar un parqueadero
-export const eliminarParqueadero = async (req, res, next) => {
-  try {
-    const { id } = req.body;
-    const parqueadero = await Parqueadero.findByPk(id);
-
-    if (parqueadero) {
-      await parqueadero.destroy();
-      res.status(200).send({
-        status: "success",
-        mensaje: "Parqueadero eliminado exitosamente",
-      });
-    } else {
-      res.status(404).send({
-        status: "error",
-        mensaje: "Parqueadero no encontrado",
-      });
-    }
-  } catch (error) {
-    next(error);
-  }
-};
 export default Parqueadero;

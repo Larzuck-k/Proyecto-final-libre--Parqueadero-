@@ -8,7 +8,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ config('app.name', 'Laravel') }}/Facturación</title>
-
+    <link rel="shortcut icon" href="../../assets/images/logo-black.svg" />
     <link rel="dns-prefetch" href="//fonts.bunny.net">
     <link rel="stylesheet" href="/assets/vendors/mdi/css/materialdesignicons.min.css">
     <link rel="stylesheet" href="/assets/vendors/ti-icons/css/themify-icons.css">

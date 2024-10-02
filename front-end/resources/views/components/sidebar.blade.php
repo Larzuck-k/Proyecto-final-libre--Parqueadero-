@@ -31,19 +31,8 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link"
-                            href="/databases/?api_url={{ env('API_URL') }}/cliente/obtener&title=Clientes">Clientes</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link"
                             href="/databases/?api_url={{ env('API_URL') }}/contrato/obtener&title=Contratos">Contratos</a>
                     </li>
-                    @if (Auth::user()->id_rol == 1)
-                        <li class="nav-item">
-                            <a class="nav-link"
-                                href="/databases/?api_url={{ env('API_URL') }}/contratos/obtener&title=Tipo de Contratos">Tipo
-                                de Contratos</a>
-                        </li>
-                    @endif
                     <li class="nav-item">
                         <a class="nav-link"
                             href="/databases/?api_url={{ env('API_URL') }}/factura/obtener&title=Facturas">Facturas</a>
@@ -52,10 +41,6 @@
                         <li class="nav-item">
                             <a class="nav-link"
                                 href="/databases/?api_url={{ env('API_URL') }}/parqueadero/obtener&title=Parqueaderos">Parqueaderos</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link"
-                                href="/databases/?api_url={{ env('API_URL') }}/tipo_ocupacion/obtener&title=Tipo de Ocupación">Tipo de Ocupación</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link"

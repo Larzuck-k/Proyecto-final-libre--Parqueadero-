@@ -3,8 +3,8 @@
 $apiUrl = $_GET["api_url"]; // Reemplaza con la URL de tu API
 $title = $_GET["title"]; // Reemplaza con la URL de tu API
 
-$pages = ['Usuarios', 'Contratistas', 'Clientes', 'Contratos', 'Tipo de Contratos', 'Facturas', 'Tipo de Ocupación', 'Espacios', 'Parqueaderos', 'Reservas', 'Roles'];
-$pagesAdmin = ['Usuarios', 'Tipo de Contratos', 'Tipo de Ocupación', 'Espacios', 'Parqueaderos', 'Roles'];
+$pages = ['Usuarios', 'Contratistas','Contratos', 'Facturas', 'Espacios', 'Parqueaderos', 'Reservas', 'Roles'];
+$pagesAdmin = ['Usuarios',  'Espacios', 'Parqueaderos', 'Roles'];
 if (!in_array($title, $pages)) {
     ?>
 <script>
@@ -25,33 +25,28 @@ $updateUrl = str_replace("obtener", "estado", $apiUrl); // Reemplaza con la URL 
 // Obtener los datos de la API
 $response = FALSE;
 $roles = FALSE;
-$tipo_ocupaciones = FALSE;
 $parqueaderos = FALSE;
+$messageError = "";
 try {
     $response = file_get_contents($apiUrl);
     if ($title == "Usuarios") {
         $roles = file_get_contents(env("API_URL") . "/rol/obtener");
     } else if ($title == "Espacios") {
-        $tipo_ocupaciones = file_get_contents(env("API_URL") . "/tipo_ocupacion/obtener");
         $parqueaderos = file_get_contents(env("API_URL") . "/parqueadero/obtener");
     }
 } catch (Exception $e) {
     if (!$roles && $title == "Usuarios") {
-        echo "<h1>Error al obtener los datos de los roles</h1>";
-    }
-    if (!$tipo_ocupaciones && $title == "Espacios") {
-        echo "<h1>Error al obtener los datos de tipo de ocupación</h1>";
+        $messageError .= "Error al obtener los datos de los roles\n";
     }
     if (!$parqueaderos && $title == "Espacios") {
-        echo "<h1>Error al obtener los datos de los parqueaderos</h1>";
+        $messageError .= "Error al obtener los datos de los parqueaderos\n";
     }
 
     if ($response == FALSE) {
-        echo "<h1>Error al obtener los datos de $title</h1>";
+        $messageError .= "Error al obtener los datos de $title\n";
     }
     $response = false;
     $roles = false;
-    $tipo_ocupaciones = false;
     $parqueaderos = false;
 }
 
@@ -59,14 +54,13 @@ try {
 // Decodificar el JSON
 $data = json_decode($response, true);
 $dataRoles = json_decode($roles, true);
-$dataTipoOcupaciones = json_decode($tipo_ocupaciones, true);
 $dataParqueaderos = json_decode($parqueaderos, true);
 $headersRoles = [];
-$headersTipoOcupaciones = [];
 $headersParqueaderos = [];
+
 if ($title == "Usuarios") {
     if ($dataRoles === NULL) {
-        echo "Error al decodificar el JSON roles";
+        $messageError .= "Error al decodificar el JSON roles\n";
     }
 
     if (empty($dataRoles)) {
@@ -75,34 +69,42 @@ if ($title == "Usuarios") {
         $headersRoles = array_keys($dataRoles[0]);
     }
 } else if ($title == "Espacios") {
-    if ($dataTipoOcupaciones === NULL) {
-        echo "Error al decodificar el JSON tipo de ocupación";
-    }
     if ($dataParqueaderos === NULL) {
-        echo "Error al decodificar el JSON parqueaderos";
+        $messageError .=  "Error al decodificar el JSON parqueaderos\n";
     }
-    if (empty($dataTipoOcupaciones) || empty($dataParqueaderos)) {
-        $data = [];
-    } else {
-        $headersTipoOcupaciones = array_keys($dataTipoOcupaciones[0]);
+   
+    $todosVacios = true;
+    foreach ($dataParqueaderos[0] as $valor) {
+        if (!empty($valor)) {
+            $todosVacios = false;
+            break;
+        }
+    }
+
+    if ($todosVacios) {
+        $messageError .= "Necesitas crear un parqueadero primero para gestionar los espacios\n";
+    } 
+   else {
         $headersParqueaderos = array_keys($dataParqueaderos[0]);
     }
 }
 
 // Verificar si la decodificación fue exitosa
 if ($data === NULL) {
-    echo ('Error al decodificar el JSON');
+    $messageError .=  "Error al decodificar el JSON\n";
 }
 
 // Verificar que los datos no están vacíos
 if (empty($data)) {
-    echo (' No se encontraron datos');
-} else {
+    $messageError .=  "No se encontraron datos\n";
 
+} 
+
+if($messageError == ""){
     // Obtener las claves del primer elemento para usar como encabezados de columna
     $headers = array_keys($data[0]);
     // Añadir una columna de acciones
-    if (in_array('estado', $headers) || $title == "Tipo de Ocupación") {
+    if (in_array('estado', $headers) && $title != "Contratos") {
         $headers[] = 'Acciones';
     }
 
@@ -110,7 +112,7 @@ if (empty($data)) {
     echo '<span class="display-3 fw-bold">' . $title . '</span>';
     echo '<p></p>';
 
-    if ($title != "Roles") {
+    if ($title != "Roles" && $title != "Contratos" && $title != "Reservas" ) {
         echo '<button type="button" class="btn btn-primary " data-bs-toggle="modal" data-bs-target="#createModal">Crear Nuevo</button>';
     }
 
@@ -124,8 +126,7 @@ if (empty($data)) {
     foreach ($headers as $header) {
         $header = strtoupper(substr($header, 0, 1)) . substr($header, 1, strlen($header) - 1);
         switch (strtolower($header)) {
-            case "cliente_contratista_cliente":
-            case "cliente_contratista_contratista":
+            case "estado":
                 $header = "Estado";
                 break;
             case "ultima_visita":
@@ -138,7 +139,7 @@ if (empty($data)) {
                 $header = "Contraseña";
                 break;
             case "id_usuario":
-                $header = "Id Usuario";
+                $header = "Id usuario";
                 break;
             case "name":
                 $header = "Nombre";
@@ -146,29 +147,40 @@ if (empty($data)) {
             case "nombre_rol":
                 $header = "Rol";
                 break;
-            case "id_tipo_ocupacion":
-                $header = "Id Tipo de Ocupación";
-                break;
             case "id_parqueadero":
-                $header = "Id Parqueadero";
+                $header = "Id parqueadero";
                 break;
-            case "tipo_ocupacion":
-                $header = "Tipo de Ocupación";
+            case "fecha_inicio":
+                $header = "Fecha inicio";
+                break;
+            case "fecha_fin":
+                $header = "Fecha fin";
+                break;
+            case "id_contratista":
+                $header = "Id contratista";
+                break;
+            case "id_espacio":
+                $header = "Id espacio";
+                break;
+            case "fin_reserva":
+                $header = "Fin reserva";
+                break;
+            case "fecha_emision":
+                $header = "Fecha de emisión";
+                break;
+            case "monto_total":
+                $header = "Monto total";
+                break;
+            case "identificacion":
+                $header = "Identificación";
                 break;
         }
 
-        if (strtolower($header) != "id_rol") {
-            if ($header == "Id Tipo de Ocupación" || $header == "Id Parqueadero") {
-                echo "<th style=\"display:none\">" . htmlspecialchars(__($header)) . "</th>";
-            } else {
+        if (strtolower($header) != "id_rol" && $header != "Id parqueadero") {
+
                 echo "<th>" . htmlspecialchars(__($header)) . "</th>";
-            }
 
         }
-
-
-
-
     }
     echo '</tr>';
     echo '</thead>';
@@ -189,29 +201,26 @@ if (empty($data)) {
                     if ($header === 'Acciones') {
                         // Añadir formularios de activar/desactivar y editar en la columna de acciones
                         $id = htmlspecialchars(is_array($row['id']) ? implode(', ', $row['id']) : $row['id']);
-                        switch ($title) {
-                            case "Tipo de Ocupación":
-                            case "Espacios":
-                                $editButton = "<button class='btn btn-primary' onclick='showEditModal($id)'>Editar</button>";
-                                echo "<td>$editButton</td>";
-                                break;
-                            default:
-                                $status = isset($row['estado']) ? htmlspecialchars(is_array($row['estado']) ? implode(', ', $row['estado']) : $row['estado']) : "";
 
 
-                                $actionForm = $status == "Disponible"
-                                    ? "<button class='btn btn-danger' onclick='updateStatus($id,'Ocupado')'>Ocupar</button>"
-                                    : "<button class='btn btn-success' onclick='updateStatus($id,'Disponible')'>Liberar</button>";
+                        $status = isset($row['estado']) ? htmlspecialchars(is_array($row['estado']) ? implode(', ', $row['estado']) : $row['estado']) : "";
 
-                                $actionForm = $status == 1
-                                    ? "<button class='btn btn-danger' onclick='updateStatus($id, 0)'>Desactivar</button>"
-                                    : "<button class='btn btn-success' onclick='updateStatus($id, 1)'>Activar</button>";
+                        $actionForm = $status == 1
+                            ? "<button class='btn btn-danger' onclick='updateStatus($id, 0)'>Desactivar</button>"
+                            : "<button class='btn btn-success' onclick='updateStatus($id, 1)'>Activar</button>";
+
+                        
 
 
 
                                 $editButton = "<button class='btn btn-primary' onclick='showEditModal($id)'>Editar</button>";
+                        if($title != "Espacios" && $title != "Contratos" && $title != "Reservas"){
                                 echo "<td>$actionForm $editButton</td>";
                         }
+                        else if($title == "Espacios"){
+                                echo "<td>$editButton</td>";
+                        }
+                      
 
                     } else {
                         // Verificar si el valor en $row[$header] es un array
@@ -220,6 +229,7 @@ if (empty($data)) {
                             if ($title != "Espacios") {
                                 $cellValue = $cellValue == 1 ? "Activo" : "Inactivo";
                             }
+
                         }
                         if ($header === 'password') {
                             echo "<td>*****</td>";
@@ -238,7 +248,19 @@ if (empty($data)) {
 
                                 // Si no es una fecha, sanitizar la salida
                                 if ($header != "id_rol") {
-                                    if ($header == "id_tipo_ocupacion" || $header == "id_parqueadero") {
+                                    if($header == "estado"){
+                                        if($cellValue == "Activo" || $cellValue == "Disponible"){
+                                            echo "<td><span class=\"badge rounded-pill text-bg-success text-light\" style=\"font-weight: bold\">" . htmlspecialchars($cellValue) . "</span></td>";
+                                        }
+                                        else if($cellValue == "Reservado"){
+                                           echo "<td><span class=\"badge rounded-pill text-bg-warning text-light\" style=\"font-weight: bold\">" . htmlspecialchars($cellValue) . "</span></td>"; 
+                                        }
+                                        else{
+                                            echo "<td><span class=\"badge rounded-pill text-bg-danger text-light\" style=\"font-weight: bold\">" . htmlspecialchars($cellValue) . "</span></td>";
+                                        }
+                                        
+                                    }
+                                    else if ($header == "id_parqueadero") {
                                         echo "<td style=\"display:none\">" . htmlspecialchars($cellValue) . "</td>";
                                     } else {
                                         echo "<td>" . htmlspecialchars($cellValue) . "</td>";
@@ -303,11 +325,8 @@ if (empty($data)) {
     echo '</div>';
     echo '</div>';
     echo '</div>';
-    
-?>
-
-<script>
-
+    ?>
+    <script>
     function updateStatus(id, status) {
         var updateUrl = '<?php    echo $updateUrl; ?>';
         var data = {
@@ -333,7 +352,13 @@ if (empty($data)) {
 
             })
             .catch(error => {
-                alert('Error al actualizar el estado');
+                Swal.fire({
+                position: "center",
+                icon: "error",
+                title: "Error al actualizar estado",
+                showConfirmButton: false,
+                timer: 1500 
+                });
             });
     }
 
@@ -342,7 +367,13 @@ if (empty($data)) {
         var row = document.querySelector(`tr[data-id="${id}"]`);
         document.getElementById("editthis").value = id;
         if (row === null) {
-            alert(`No se encontró la fila con id ${id}`);
+            Swal.fire({
+                position: "center",
+                icon: "error",
+                title: `No se encontró la fila con id ${id}`,
+                showConfirmButton: false,
+                timer: 1500 
+                });
             return;
         }
 
@@ -404,6 +435,12 @@ if (empty($data)) {
                     columnName = "Última visita";
                     title.style = "display:none";
                     input.style = "display:none";
+                    break;
+                case "identificacion":
+                    input.type = "number";
+                    input.name = columnName;
+                    columnName = "Identificación";
+                    input.className = "form-control rounded-3";
                     break;
                 case "name":
                     input.type = 'text';
@@ -467,28 +504,6 @@ if (empty($data)) {
 
                     @endif
 
-                    break;
-                case "id_tipo_ocupacion":
-                    @if($title == "Espacios")
-                                    input = document.createElement("select");
-                                    input.name = "id_tipo_ocupacion";
-                                    columnName = "Tipo de Ocupación";
-                                    input.className = "form-select";
-                                    input.innerHTML += `<?php
-
-                        foreach ($dataTipoOcupaciones as $ocupacion) {
-                            $id_tipo_ocupacion = $ocupacion['id'];
-                            $nombre_tipo_ocupacion = $ocupacion['descripcion'];
-                            echo "<option value=\"$id_tipo_ocupacion\">$nombre_tipo_ocupacion</option>";
-                        }   
-                                                                                                                                ?>`;
-                    @endif
-
-                    Array.from(input.options).forEach((element) => {
-                        if (element.innerText == row.children[i + 2].textContent.trim()) {
-                            element.setAttribute("selected", true);
-                        }
-                    })
                     break;
                 case "id_parqueadero":
                     @if($title == "Espacios")
@@ -719,11 +734,17 @@ if (empty($data)) {
                 input = document.createElement('input');
                 input.name = columnName;
                 input.type = 'text'; // Use 'text' or 'date' depending on your requirement
-                input.value = "null";
                 input.style.display = "none";
                 title.style.display = "none";
                 break;
-
+            case "identificacion":
+                    input = document.createElement('input');;
+                    input.name = columnName;
+                    input.type = 'number';
+                    input.value = "";
+                    columnName = "Identificación";
+                    input.className = "form-control rounded-3";
+                    break;
             case "name":
                 input = document.createElement('input');
                 input.type = 'text';
@@ -788,23 +809,6 @@ if (empty($data)) {
 
                 @endif
                 break;
-            case "id_tipo_ocupacion":
-                @if($title == "Espacios")
-
-                            input = document.createElement("select");
-                            input.name = "id_tipo_ocupacion";
-                            columnName = "Tipo de Ocupación";
-                            input.className = "form-select";
-                            input.innerHTML += `<?php
-
-                    foreach ($dataTipoOcupaciones as $ocupacion) {
-                        $id_tipo_ocupacion = $ocupacion['id'];
-                        $nombre_tipo_ocupacion = $ocupacion['descripcion'];
-                        echo "<option value=\"$id_tipo_ocupacion\">$nombre_tipo_ocupacion</option>";
-                    }   
-                                                                                        ?>`;
-                @endif
-                break;
             case "id_parqueadero":
                 @if($title == "Espacios")
 
@@ -835,7 +839,7 @@ if (empty($data)) {
         var labelText = columnName.charAt(0).toUpperCase() + columnName.slice(1);
         title.innerText = labelText;
 
-        if (columnName != "id_rol" && columnName != "tipo_ocupacion" && columnName != "parqueadero") {
+        if (columnName != "id_rol" && columnName != "parqueadero") {
             createForm.appendChild(title);
             createForm.appendChild(input);
             createForm.appendChild(document.createElement('br'));
@@ -966,8 +970,22 @@ if (empty($data)) {
         // Close the modal
         $('#createModal').modal('hide');
     }
-
-</script>
-<?php
+    </script>
+    <?php
 }
-?>
+else{
+    ?>
+
+    <script>
+        const messageError = `{{substr($messageError,0,strlen($messageError))}}`;
+        Swal.fire({
+                position: "center",
+                icon: "error",
+                title: messageError,
+                showConfirmButton: false,
+                timer: 3500 
+                });
+        
+    </script>
+    <?php
+}   

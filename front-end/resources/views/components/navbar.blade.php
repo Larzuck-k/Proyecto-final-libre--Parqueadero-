@@ -17,7 +17,7 @@
           <div class="input-group-prepend bg-transparent">
             <i class="input-group-text border-0 mdi mdi-magnify"></i>
           </div>
-          <input type="text" class="form-control bg-white rounded-4 border-0" placeholder="Search projects">
+          <input type="text" class="form-control bg-white rounded-4 border-0" placeholder="Buscar..">
         </div>
       </form>
     </div>
@@ -30,7 +30,7 @@
           <span class="count-symbol bg-warning"></span>
         </a>
         <div class="dropdown-menu dropdown-menu-end navbar-dropdown preview-list" aria-labelledby="messageDropdown">
-          <h6 class="p-3 mb-0">Messages</h6>
+          <h6 class="p-3 mb-0 bg-warning">Mensajes</h6>
           <div class="dropdown-divider"></div>
           <!-- Repeat for other messages -->
           <a class="dropdown-item preview-item">
@@ -38,14 +38,14 @@
               <img src="{{ asset('assets/images/faces/face4.jpg') }}" alt="image" class="profile-pic">
             </div>
             <div class="preview-item-content d-flex align-items-start flex-column justify-content-center">
-              <h6 class="preview-subject ellipsis mb-1 font-weight-normal">Mark sent you a message
+              <h6 class="preview-subject ellipsis mb-1 font-weight-normal">Marco te envió un mensaje
               </h6>
-              <p class="text-gray mb-0">1 Minute ago</p>
+              <p class="text-gray mb-0">Hace 1 minuto</p>
             </div>
           </a>
           <div class="dropdown-divider"></div>
           <!-- Add more items as needed -->
-          <h6 class="p-3 mb-0 text-center">4 new messages</h6>
+          <h6 class="p-3 mb-0 text-center bg-primary">4 mensajes nuevos</h6>
         </div>
       </li>
 
@@ -58,7 +58,7 @@
         </a>
         <div class="dropdown-menu dropdown-menu-end navbar-dropdown preview-list"
           aria-labelledby="notificationDropdown">
-          <h6 class="p-3 mb-0">Notifications</h6>
+          <h6 class="p-3 mb-0 bg-danger">Notificaciones</h6>
           <div class="dropdown-divider"></div>
           <!-- Repeat for other notifications -->
           <a class="dropdown-item preview-item">
@@ -68,13 +68,13 @@
               </div>
             </div>
             <div class="preview-item-content d-flex align-items-start flex-column justify-content-center">
-              <h6 class="preview-subject font-weight-normal mb-1">Event today</h6>
-              <p class="text-gray ellipsis mb-0">Just a reminder that you have an event today</p>
+              <h6 class="preview-subject font-weight-normal mb-1">Evento hoy</h6>
+              <p class="text-gray ellipsis mb-0">Solo recuerda que tienes un evento hoy</p>
             </div>
           </a>
           <div class="dropdown-divider"></div>
           <!-- Add more items as needed -->
-          <h6 class="p-3 mb-0 text-center">See all notifications</h6>
+          <h6 class="p-3 mb-0 text-center bg-primary">Ver todas las notificaciones</h6>
         </div>
       </li>
 
@@ -91,13 +91,13 @@
           </div>
         </a>
         <div class="dropdown-menu navbar-dropdown" aria-labelledby="profileDropdown">
-          <a class="dropdown-item" href="#">
+          {{-- <a class="dropdown-item" href="#">
             <i class="mdi mdi-cached me-2 text-success"></i> Activity Log
-          </a>
+          </a> --}}
           <div class="dropdown-divider"></div>
           <a class="dropdown-item" href="{{ route('logout') }}"
             onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-            <i class="mdi mdi-logout me-2 text-primary"></i> Signout
+            <i class="mdi mdi-logout me-2 text-primary"></i> Cerrar sesión
           </a>
           <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
             @csrf

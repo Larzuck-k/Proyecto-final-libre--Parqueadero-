@@ -56,26 +56,4 @@ export const actualizarDetalleFactura = async (req, res, next) => {
   }
 };
 
-// Eliminar un detalle de factura
-export const eliminarDetalleFactura = async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    const detalleFactura = await DetalleFactura.findByPk(id);
-
-    if (detalleFactura) {
-      await detalleFactura.destroy();
-      res.status(200).send({
-        status: "success",
-        mensaje: "Detalle de factura eliminado exitosamente",
-      });
-    } else {
-      res.status(404).send({
-        status: "error",
-        mensaje: "Detalle de factura no encontrado",
-      });
-    }
-  } catch (error) {
-    next(error);
-  }
-};
 export default DetalleFactura;
