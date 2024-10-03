@@ -1,6 +1,7 @@
 import { DataTypes } from "sequelize";
 import db from "./db.js";
 import espacio from "./espacio.js";
+import Cliente from "./cliente.js";
 
 const Detalle_Cliente = db.define(
   "Detalle_Cliente",
@@ -30,6 +31,10 @@ const Detalle_Cliente = db.define(
     },
     id_cliente: {
       type: DataTypes.INTEGER,
+      references: {
+        model: Cliente,
+        key: "id",
+      },
       defaultValue: 9999,
     },
   },

@@ -1,5 +1,6 @@
 import { Op } from "sequelize";
 import Contratista from "../models/contratista.js";
+import usuario from "../models/usuario.js";
 
 // Crear un nuevo contratista
 export const crearContratista = async (req, res, next) => {
@@ -51,14 +52,37 @@ export const cambiarEstado = async (req, res, next) => {
 // Obtener todos los contratistas
 export const obtenerContratistas = async (req, res, next) => {
   try {
-    const contratistas = await Contratista.findAll();
+    const contratistas = await Contratista.findAll({
+      attributes: [
+        "id",
+        "identificacion",
+        "nombre",
+        "email",
+        "telefono",
+        ["estado", "estado_temporal"],
+      ],
+      include: { model: usuario, attributes: ["name"], as: "usuario_table" },
+    });
 
+    contratistas.map((e) => {
+      const data = e.dataValues;
+      data.usuario = e.usuario_table.name;
+      data.estado = data.estado_temporal;
+      delete data.usuario_table;
+      delete data.estado_temporal;
+
+      return data;
+    });
     if (contratistas.length === 0) {
       const columnNames = Object.keys(Contratista.getAttributes());
+
       const emptyObject = columnNames.reduce(
         (acc, curr) => ({ ...acc, [curr]: "" }),
         {}
       );
+      delete emptyObject.estado;
+      emptyObject.usuario = "";
+      emptyObject.estado = "";
       res.status(200).send([emptyObject]);
     } else {
       res.status(200).send(contratistas);

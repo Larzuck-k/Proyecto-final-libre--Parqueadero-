@@ -25,6 +25,10 @@
                                 href="/databases/?api_url={{ env('API_URL') }}/usuario/obtener&title=Usuarios">Usuarios</a>
                         </li>
                     @endif
+                     <li class="nav-item">
+                        <a class="nav-link"
+                            href="/databases/?api_url={{ env('API_URL') }}/detalleCliente/obtener&title=Clientes">Clientes</a>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link"
                             href="/databases/?api_url={{ env('API_URL') }}/contratista/obtener&title=Contratistas">Contratistas</a>
@@ -33,10 +37,18 @@
                         <a class="nav-link"
                             href="/databases/?api_url={{ env('API_URL') }}/contrato/obtener&title=Contratos">Contratos</a>
                     </li>
+                     @if (Auth::user()->id_rol == 1)
                     <li class="nav-item">
                         <a class="nav-link"
-                            href="/databases/?api_url={{ env('API_URL') }}/factura/obtener&title=Facturas">Facturas</a>
+                            href="/databases/?api_url={{ env('API_URL') }}/factura_contratista/obtener&title=Facturas contratistas">Facturas contratistas</a>
                     </li>
+                       @endif
+                        @if (Auth::user()->id_rol == 1)
+                    <li class="nav-item">
+                        <a class="nav-link"
+                            href="/databases/?api_url={{ env('API_URL') }}/factura_cliente/obtener&title=Facturas clientes">Facturas clientes</a>
+                    </li>
+                       @endif
                     @if (Auth::user()->id_rol == 1)
                         <li class="nav-item">
                             <a class="nav-link"
@@ -70,21 +82,8 @@
                 <span class="menu-title">Parqueadero</span>
                 <i class="mdi mdi-car menu-icon"></i>
             </a>
-        </li>
+    </li>
 
-        {{-- <li class="nav-item">
-            <a class="nav-link" data-bs-toggle="collapse" href="#charts" aria-expanded="false" aria-controls="charts">
-                <span class="menu-title">Informes</span>
-                <i class="mdi mdi-chart-bar menu-icon"></i>
-            </a>
-            <div class="collapse" id="charts">
-                <ul class="nav flex-column sub-menu">
-                    <li class="nav-item">
-                        <a class="nav-link" href="pages/charts/chartjs.html">ChartJs</a>
-                    </li>
-                </ul>
-            </div>
-        </li> --}}
         <li class="nav-item">
             <a class="nav-link" href="/facturacion">
                 <span class="menu-title">Facturación</span>

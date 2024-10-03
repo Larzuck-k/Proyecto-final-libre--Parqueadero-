@@ -9,7 +9,8 @@ import Detalle_Cliente from "./detalle_cliente.js";
 export const crearContrato = async (req, res, next) => {
   const transaction = await db.transaction();
   try {
-    const { tiempo, cantidad, id_contratista, id_espacio } = req.body;
+    const { tiempo, cantidad, id_contratista, id_espacio, valor_contrato } =
+      req.body;
     let totalTiempo = 0;
     if (cantidad == 0) {
       transaction.rollback();
@@ -56,6 +57,7 @@ export const crearContrato = async (req, res, next) => {
         fecha_fin: fechaFinal,
         id_contratista: contratista.id,
         id_espacio,
+        valor_contrato,
       },
       { transaction }
     );
@@ -103,13 +105,44 @@ export const cambiarEstado = async (req, res, next) => {
 // Obtener todos los contratos
 export const obtenerContratos = async (req, res, next) => {
   try {
-    const contratos = await Contrato.findAll();
+    const contratos = await Contrato.findAll({
+      attributes: [
+        "id",
+        "fecha_inicio",
+        "fecha_fin",
+        "valor_contrato",
+        "id_contratista",
+        ["id_espacio", "id_espacio_temporal"],
+        ["estado", "estado_temporal"],
+      ],
+      include: {
+        model: Contratista,
+        attributes: ["nombre"],
+        as: "contratista_contrato_table",
+      },
+    });
+    contratos.map((e) => {
+      const data = e.dataValues;
+      data.nombre = data.contratista_contrato_table.nombre;
+      data.id_espacio = data.id_espacio_temporal;
+      data.estado = data.estado_temporal;
+      delete data.contratista_contrato_table;
+      delete data.id_espacio_temporal;
+      delete data.estado_temporal;
+
+      return data;
+    });
     if (contratos.length === 0) {
       const columnNames = Object.keys(Contrato.getAttributes());
       const emptyObject = columnNames.reduce(
         (acc, curr) => ({ ...acc, [curr]: "" }),
         {}
       );
+      delete emptyObject.id_espacio;
+      delete emptyObject.estado;
+      emptyObject.contratista = "";
+      emptyObject.id_espacio = "";
+      emptyObject.estado = "";
       res.status(200).send([emptyObject]);
     } else {
       res.status(200).send(contratos);
@@ -156,7 +189,13 @@ export const obtenerContrato = async (req, res, next) => {
 export const actualizarContrato = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { fecha_inicio, fecha_fin, id_contratista, id_espacio } = req.body;
+    const {
+      fecha_inicio,
+      fecha_fin,
+      id_contratista,
+      id_espacio,
+      valor_contrato,
+    } = req.body;
     const contrato = await Contrato.findByPk(id);
 
     if (contrato) {
@@ -164,6 +203,7 @@ export const actualizarContrato = async (req, res, next) => {
       contrato.fecha_fin = fecha_fin || contrato.fecha_fin;
       contrato.id_contratista = id_contratista || contrato.id_contratista;
       contrato.id_espacio = id_espacio || contrato.id_espacio;
+      contrato.valor_contrato = valor_contrato || contrato.valor_contrato;
       await contrato.save();
       res.status(200).send({
         status: "success",

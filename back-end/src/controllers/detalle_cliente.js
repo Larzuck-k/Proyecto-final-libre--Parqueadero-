@@ -47,5 +47,25 @@ export const CrearDetalleCliente = async (req, res, next) => {
     next(error);
   }
 };
+export const ObtenerClientes = async (req, res, next) => {
+  try {
+    const clientes = await Detalle_Cliente.findAll();
+
+    if (clientes.length === 0) {
+      const columnNames = Object.keys(Detalle_Cliente.getAttributes());
+
+      const emptyObject = columnNames.reduce(
+        (acc, curr) => ({ ...acc, [curr]: "" }),
+        {}
+      );
+
+      res.status(200).send([emptyObject]);
+    } else {
+      res.status(200).send(clientes);
+    }
+  } catch (error) {
+    next(error);
+  }
+};
 
 export default Detalle_Cliente;

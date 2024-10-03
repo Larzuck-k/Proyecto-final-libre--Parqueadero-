@@ -3,8 +3,8 @@
 $apiUrl = $_GET["api_url"]; // Reemplaza con la URL de tu API
 $title = $_GET["title"]; // Reemplaza con la URL de tu API
 
-$pages = ['Usuarios', 'Contratistas','Contratos', 'Facturas', 'Espacios', 'Parqueaderos', 'Reservas', 'Roles'];
-$pagesAdmin = ['Usuarios',  'Espacios', 'Parqueaderos', 'Roles'];
+$pages = ['Usuarios', 'Clientes','Contratistas','Contratos', 'Espacios', 'Facturas contratistas','Facturas clientes','Parqueaderos', 'Reservas', 'Roles'];
+$pagesAdmin = ['Usuarios',  'Espacios', 'Parqueaderos','Facturas contratistas','Facturas clientes', 'Roles'];
 if (!in_array($title, $pages)) {
     ?>
 <script>
@@ -104,7 +104,7 @@ if($messageError == ""){
     // Obtener las claves del primer elemento para usar como encabezados de columna
     $headers = array_keys($data[0]);
     // Añadir una columna de acciones
-    if (in_array('estado', $headers) && $title != "Contratos") {
+    if (in_array('estado', $headers) && $title != "Contratos" && $title != "Facturas contratistas" && $title != "Facturas clientes" && $title != "Clientes" && $title != "Reservas") {
         $headers[] = 'Acciones';
     }
 
@@ -112,7 +112,7 @@ if($messageError == ""){
     echo '<span class="display-3 fw-bold">' . $title . '</span>';
     echo '<p></p>';
 
-    if ($title != "Roles" && $title != "Contratos" && $title != "Reservas" ) {
+    if ($title != "Roles" && $title != "Contratos" && $title != "Reservas" && $title != "Facturas contratistas" && $title != "Facturas clientes" && $title != "Clientes") {
         echo '<button type="button" class="btn btn-primary " data-bs-toggle="modal" data-bs-target="#createModal">Crear Nuevo</button>';
     }
 
@@ -174,12 +174,28 @@ if($messageError == ""){
             case "identificacion":
                 $header = "Identificación";
                 break;
+            case "id_contrato":
+                $header = "Id contrato";
+                break;
+            case "valor_hora":
+                $header = "Valor hora";
+                break;
+            case "hora_entrada":
+                $header = "Hora entrada";
+                break;
+            case "hora_salida":
+                $header = "Hora salida";
+                break;
+            case "id_cliente":
+                $header = "Id cliente";
+                break;
+            case "valor_contrato":
+                $header = "Valor contrato";
+                break;
         }
 
-        if (strtolower($header) != "id_rol" && $header != "Id parqueadero") {
-
+        if (strtolower($header) != "id_rol" && $header != "Id parqueadero"  && strtolower($header) != "id_detalle_cliente") {
                 echo "<th>" . htmlspecialchars(__($header)) . "</th>";
-
         }
     }
     echo '</tr>';
@@ -209,12 +225,8 @@ if($messageError == ""){
                             ? "<button class='btn btn-danger' onclick='updateStatus($id, 0)'>Desactivar</button>"
                             : "<button class='btn btn-success' onclick='updateStatus($id, 1)'>Activar</button>";
 
-                        
-
-
-
                                 $editButton = "<button class='btn btn-primary' onclick='showEditModal($id)'>Editar</button>";
-                        if($title != "Espacios" && $title != "Contratos" && $title != "Reservas"){
+                        if($title != "Espacios" && $title != "Contratos" && $title != "Reservas" && $title != "Facturas clientes" && $title != "Facturas contratistas" && $title != "Clientes"){
                                 echo "<td>$actionForm $editButton</td>";
                         }
                         else if($title == "Espacios"){
@@ -274,7 +286,12 @@ if($messageError == ""){
                     }
                 } else {
                     // Manejo del caso en que la columna no existe en la fila
+                    if($header == "hora_salida"){
+                    echo "<td>SIN REGISTRAR</td>";
+                    }else{
                     echo "<td>Columna no disponible</td>";
+                    }
+                    
                 }
             }
 

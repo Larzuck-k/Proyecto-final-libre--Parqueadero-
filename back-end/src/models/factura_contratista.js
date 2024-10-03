@@ -3,12 +3,12 @@ import db from "./db.js";
 import Contrato from "./contrato.js";
 import Contratista from "./contratista.js";
 
-export default db.define(
-  "Factura",
+const Factura_Contratista = db.define(
+  "Factura_Contratista",
   {
     id: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
     },
     fecha_emision: {
@@ -25,6 +25,7 @@ export default db.define(
         model: Contratista,
         key: "id",
       },
+      allowNull: false,
     },
     id_contrato: {
       type: DataTypes.INTEGER,
@@ -32,10 +33,13 @@ export default db.define(
         model: Contrato,
         key: "id",
       },
+      allowNull: false,
     },
   },
   {
-    tableName: "Factura",
+    tableName: "Factura_Contratista",
     timestamps: false,
   }
 );
+
+export default Factura_Contratista;

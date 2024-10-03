@@ -78,12 +78,19 @@ if ($dataParqueaderos == null) {
                         <option value="1">Reservar espacio</option>
                         <option value="2">Ocupar espacio</option>
                     </select>
+                        <div class="my-2 d-flex justify-content-center w-100 d-none" id="containerButtonsAction"> 
+                    <button type="button" class="btn btn-success w-100" id="selectPlacaButton">Placa</button>
+                    <button type="button" class="btn btn-success ms-3 w-100" id="selectContratoButton">Contrato</button>
+                    </div>
+                     
                     <div class="d-none" id="searchContainer">
                     <label class="form-label my-3" for="name">Contratista</label>
                     <input type="text" class="form-control" name="name"
                         placeholder="Buscar por nombres o identificación" id="search">
                     </div>
                     <div class="d-none" id="ocuparEspacioContainer">
+
+                    <div class="d-none" id="ocuparEspacioContratista">
                     <label class="form-label my-3">Tiempo</label>
                     <select class="form-select" id="tiempo">
                         <option value="0">Selecciona el tiempo</option>
@@ -92,7 +99,19 @@ if ($dataParqueaderos == null) {
                     </select>
                     <label class="form-label my-3">Cantidad</label>
                     <input type="number" class="form-control" placeholder="Digite un valor" id="cantidad">
+
+                    <label class="form-label my-3">Valor del contrato</label>
+                    <input type="number" class="form-control" placeholder="Digite un valor" id="valorContrato" min="1">
                     </div>
+
+                    {{-- Cliente normal --}}
+                    <div class="d-none" id="ocuparEspacioClienteNormal"> 
+                    <label class="form-label my-3">Placa del vehículo</label>
+                    <input type="text" id="placaOcupar" class="form-control" placeholder="Digite la placa">
+                    </div>
+
+                    </div>
+   
                     <div class="d-none" id="reservarEspacioContainer">
                        
                         <label class="form-label my-3">Placa del vehículo</label>
@@ -170,7 +189,7 @@ if ($dataParqueaderos == null) {
         const searchContainer = inputModal.parentElement;
         const id_contratos = document.querySelector("#id_contratos");
         const tiempo = document.querySelector("#tiempo");
-        const ocuparEspacioContainer = tiempo.parentElement;
+        const ocuparEspacioContainer = tiempo.parentElement.parentElement;
 
         // FIN 
         btnSend.addEventListener("click",()=>{
@@ -226,6 +245,37 @@ if ($dataParqueaderos == null) {
             
             }   
             else if(spaceSelectOption.value == 2){
+            if(selectPlacaButton.classList.contains("btn-secondary")){
+                 const formData = {};
+                    formData.id_espacio = localStorage.getItem("data-space-id");
+                    formData.placa = placaOcupar.value;
+                    fetch("{{env("API_URL") . "/detalleCliente/crear"}}", {
+                    method:"POST",
+                    headers: {
+                    'Content-Type': 'application/json'
+                            },
+                    body: JSON.stringify(formData),
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                    Swal.fire({
+                        position: "center",
+                        icon: data.status,
+                        title: data.mensaje,
+                        showConfirmButton: false,
+                        timer: 1500 
+                            }).then(()=>{
+                                if(data.status == "success"){
+                                location.reload();
+                                }         
+                            });
+                    })
+                    .catch(error => {
+                        console.log(error);
+                        alert('Error al ocupar espacio');
+                    });
+            }
+            else{
             if(!document.querySelector("#contratistaSeleccionado")){
                 Swal.fire({
                         position: "center",
@@ -245,6 +295,7 @@ if ($dataParqueaderos == null) {
             formData.id_contratista = contratistaSeleccionado.value;
             formData.id_espacio = localStorage.getItem("data-space-id");
             formData.cantidad = cantidad.value;
+            formData.valor_contrato = valorContrato.value;
             fetch("{{env("API_URL") . "/contrato/crear/"}}", {
             method: 'POST',
             headers: {
@@ -287,7 +338,7 @@ if ($dataParqueaderos == null) {
                         timer: 3500 
                                  })
                 });
-
+                }
             }
             else{
                 Swal.fire({
@@ -307,10 +358,14 @@ if ($dataParqueaderos == null) {
                 if(!ocuparEspacioContainer.classList.contains("d-none")){
                     ocuparEspacioContainer.classList.add("d-none");
                 }
+                 if(!containerButtonsAction.classList.contains("d-none")){
+                    containerButtonsAction.classList.add("d-none");
+                }
             }
             else if (spaceSelectOption.value == 2) {
                 searchContainer.classList.remove("d-none");
                 ocuparEspacioContainer.classList.remove("d-none");
+                containerButtonsAction.classList.remove("d-none");
                 if(!reservarEspacioContainer.classList.contains("d-none")){
                     reservarEspacioContainer.classList.add("d-none");
                 }
@@ -322,6 +377,9 @@ if ($dataParqueaderos == null) {
                 }
                  if(!reservarEspacioContainer.classList.contains("d-none")){
                     reservarEspacioContainer.classList.add("d-none");
+                }
+                if(!containerButtonsAction.classList.contains("d-none")){
+                    containerButtonsAction.classList.add("d-none");
                 }
                 datatableContainer.innerHTML = "";
                 inputModal.value = "";
@@ -444,6 +502,8 @@ if ($dataParqueaderos == null) {
                 localStorage.setItem("data-reserva-placa",placa);
             }
             else if (number == 2) {
+           
+            
                 fetch("{{env("API_URL") . "/contrato/obtener/single?id="}}" +id).then(response => response.json())
                             .then(data => {
                                if(data.status == "success"){
@@ -451,7 +511,13 @@ if ($dataParqueaderos == null) {
                                 busiedBy.innerHTML = `Este espacio actualmente está ocupado por <b class="text-danger">${data.data[1].nombre}</b>, este mismo finaliza en la fecha <b class="text-danger">${data.data[0].fecha_fin.substring(0,10)}</b>.`;
                                 }
                                 else if(data.data.length == 1){
-                                busiedBy.innerHTML = `Este espacio actualmente está ocupado por el vehículo identificado con la placa <b class="text-danger">${data.data[0].placa}</b>, la fecha en la que entró es el <b class="text-danger">${new Date(data.data[0].hora_entrada).toLocaleDateString('es-ES', { day: 'numeric', month: 'long' })}</b> a las <b class="text-danger">${new Date(data.data[0].hora_entrada).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</b>.`;
+                                let now = new Date(data.data[0].hora_entrada);
+                                let offset = -5; // Offset en horas para America/Bogota
+
+                                    // Obtener la fecha actual con el offset de la zona horaria
+                                let fechaActualizada = new Date(now.getTime() + 5 * 60 * 60 * 1000);
+
+                                busiedBy.innerHTML = `Este espacio actualmente está ocupado por el vehículo identificado con la placa <b class="text-danger">${data.data[0].placa}</b>, la fecha en la que entró es el <b class="text-danger">${fechaActualizada.toLocaleDateString('es-ES', { day: 'numeric', month: 'long' })}</b> a las <b class="text-danger">${fechaActualizada.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</b>.`;
                                 }
                                }
                                else{
@@ -509,133 +575,154 @@ if ($dataParqueaderos == null) {
         }
                 // Función para crear un temporizador dinámico
        const crearTemporizador = (elementId, fechaFuturo,reservaId) => {
-    let now = new Date();
-    let offset = -5; // Offset en horas para America/Bogota
+        let now = new Date();
+        let offset = -5; // Offset en horas para America/Bogota
 
-    // Obtener la fecha actual con el offset de la zona horaria
-    let fechaActual = new Date(now.getTime() + offset * 60 * 60 * 1000).getTime();
-    
-    // Obtener la fecha futura en milisegundos
-    let fechaObjetivo = new Date(fechaFuturo).getTime();
-    
-    // Calcular la diferencia entre la fecha objetivo y la fecha actual
-    let diferencia = fechaObjetivo - fechaActual;
-
-    if (diferencia <= 0) {
-        document.getElementById(elementId).innerHTML = "Expirado";
-        return;
-    }
-
-    // Actualizar el temporizador cada segundo
-    let intervalo = setInterval(function() {
-        now = new Date();
-        fechaActual = new Date(now.getTime() + offset * 60 * 60 * 1000).getTime();
-        diferencia = fechaObjetivo - fechaActual;
-
-        // Convertir la diferencia total a horas, minutos y segundos
-        let horasTotales = Math.floor(diferencia / (1000 * 60 * 60));
-        let minutos = Math.floor((diferencia % (1000 * 60 * 60)) / (1000 * 60));
-        let segundos = Math.floor((diferencia % (1000 * 60)) / 1000);
-
-        // Mostrar el temporizador solo con horas, minutos y segundos
-        if(!document.getElementById(elementId)){
-            clearInterval(intervalo);
-        }
-        else{
-            document.getElementById(elementId).innerHTML = `${horasTotales}h ${minutos}m ${segundos}s`.substring(0,11);
-        }
+        // Obtener la fecha actual con el offset de la zona horaria
+        let fechaActual = new Date(now.getTime() + offset * 60 * 60 * 1000).getTime();
         
-        // Detener el temporizador cuando llegue a cero
+        // Obtener la fecha futura en milisegundos
+        let fechaObjetivo = new Date(fechaFuturo).getTime();
+        
+        // Calcular la diferencia entre la fecha objetivo y la fecha actual
+        let diferencia = fechaObjetivo - fechaActual;
+
         if (diferencia <= 0) {
-            clearInterval(intervalo);
-            updateSpace(document.getElementById(elementId),elementId,reservaId,false);
+            document.getElementById(elementId).innerHTML = "Expirado";
+            return;
         }
-    }, 1000);
-};
 
-    liberarEspacio.addEventListener("click",()=>{
-         updateSpace(document.getElementById("temporizador-"+localStorage.getItem("data-space-id")),"temporizador-"+localStorage.getItem("data-space-id"),localStorage.getItem("data-reserva-id"),true);
-    });
-    const updateSpace = (element,elementId,reservaId,status)=>{
-             status = status ? "&status='SI'" : "";
-           fetch("{{env("API_URL") . "/reserva/estado?id="}}" +reservaId+status, {
-                method:"POST",
-                headers: {
-                'Content-Type': 'application/json'
-                        },
-             })
-                .then(response => response.json())
-                .then(data => {
-                Swal.fire({
-                    position: "center",
-                    icon: data.status,
-                    title: data.mensaje,
-                    showConfirmButton: false,
-                    timer: 1500 
-                        }).then(()=>{
-                if(element){
-                element.parentElement.classList.remove("rectangle-reserva");
-                element.parentElement.classList.add("rectangle");
-                element.parentElement.setAttribute("data-bs-toggle","modal");
-                element.parentElement.setAttribute("data-bs-target","#ocuparEspacioModal");
-                element.parentElement.setAttribute("onclick",`openModal(1,${elementId.substring(13,elementId.length)})`);
-            
-                document.getElementById(elementId).remove();
-                document.getElementById("placa-"+elementId.substring(13,elementId.length)).remove();
-                }
-                
-                 });
-                })
-                .catch(error => {
-                    console.log(error);
-                    alert('Error al liberar el espacio');
-                });
-    }
+        // Actualizar el temporizador cada segundo
+        let intervalo = setInterval(function() {
+            now = new Date();
+            fechaActual = new Date(now.getTime() + offset * 60 * 60 * 1000).getTime();
+            diferencia = fechaObjetivo - fechaActual;
 
-    ocuparButton.addEventListener("click",()=>{
-        const elementBadge = document.getElementById("placa-"+localStorage.getItem("data-space-id"));
-        const ocuparEspacioModal = document.getElementById("ocuparEspacioModal");
+            // Convertir la diferencia total a horas, minutos y segundos
+            let horasTotales = Math.floor(diferencia / (1000 * 60 * 60));
+            let minutos = Math.floor((diferencia % (1000 * 60 * 60)) / (1000 * 60));
+            let segundos = Math.floor((diferencia % (1000 * 60)) / 1000);
 
-        if(elementBadge){
-            if(elementBadge.innerHTML == "CONTRATISTA"){
-                new bootstrap.Modal(ocuparEspacioModal).show();
+            // Mostrar el temporizador solo con horas, minutos y segundos
+            if(!document.getElementById(elementId)){
+                clearInterval(intervalo);
             }
             else{
-                const formData = {};
-                formData.id_espacio = localStorage.getItem("data-space-id");
-                formData.placa = localStorage.getItem("data-reserva-placa");
-                fetch("{{env("API_URL") . "/detalleCliente/crear"}}", {
-                method:"POST",
-                headers: {
-                'Content-Type': 'application/json'
-                        },
-                body: JSON.stringify(formData),
-             })
-                .then(response => response.json())
-                .then(data => {
-                Swal.fire({
-                    position: "center",
-                    icon: data.status,
-                    title: data.mensaje,
-                    showConfirmButton: false,
-                    timer: 1500 
-                        }).then(()=>{
-                            if(data.status == "success"){
-                            location.reload();
-                            }
-                            
-                 });
-                })
-                .catch(error => {
-                    console.log(error);
-                    alert('Error al ocupar espacio');
-                });
+                document.getElementById(elementId).innerHTML = `${horasTotales}h ${minutos}m ${segundos}s`.substring(0,11);
             }
+            
+            // Detener el temporizador cuando llegue a cero
+            if (diferencia <= 0) {
+                clearInterval(intervalo);
+                updateSpace(document.getElementById(elementId),elementId,reservaId,false);
+            }
+        }, 1000);
+};
+
+        liberarEspacio.addEventListener("click",()=>{
+            updateSpace(document.getElementById("temporizador-"+localStorage.getItem("data-space-id")),"temporizador-"+localStorage.getItem("data-space-id"),localStorage.getItem("data-reserva-id"),true);
+        });
+        const updateSpace = (element,elementId,reservaId,status)=>{
+                status = status ? "&status='SI'" : "";
+            fetch("{{env("API_URL") . "/reserva/estado?id="}}" +reservaId+status, {
+                    method:"POST",
+                    headers: {
+                    'Content-Type': 'application/json'
+                            },
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                    Swal.fire({
+                        position: "center",
+                        icon: data.status,
+                        title: data.mensaje,
+                        showConfirmButton: false,
+                        timer: 1500 
+                            }).then(()=>{
+                    if(element){
+                    element.parentElement.classList.remove("rectangle-reserva");
+                    element.parentElement.classList.add("rectangle");
+                    element.parentElement.setAttribute("data-bs-toggle","modal");
+                    element.parentElement.setAttribute("data-bs-target","#ocuparEspacioModal");
+                    element.parentElement.setAttribute("onclick",`openModal(1,${elementId.substring(13,elementId.length)})`);
+                
+                    document.getElementById(elementId).remove();
+                    document.getElementById("placa-"+elementId.substring(13,elementId.length)).remove();
+                    }
+                    
+                    });
+                    })
+                    .catch(error => {
+                        console.log(error);
+                        alert('Error al liberar el espacio');
+                    });
         }
-        else{
-            new bootstrap.Modal(ocuparEspacioModal).show();
-        }
-    });
+
+        ocuparButton.addEventListener("click",()=>{
+            const elementBadge = document.getElementById("placa-"+localStorage.getItem("data-space-id"));
+            const ocuparEspacioModal = document.getElementById("ocuparEspacioModal");
+
+            if(elementBadge){
+                if(elementBadge.innerHTML == "CONTRATISTA"){
+                    new bootstrap.Modal(ocuparEspacioModal).show();
+                }
+                else{
+                    const formData = {};
+                    formData.id_espacio = localStorage.getItem("data-space-id");
+                    formData.placa = localStorage.getItem("data-reserva-placa");
+                    fetch("{{env("API_URL") . "/detalleCliente/crear"}}", {
+                    method:"POST",
+                    headers: {
+                    'Content-Type': 'application/json'
+                            },
+                    body: JSON.stringify(formData),
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                    Swal.fire({
+                        position: "center",
+                        icon: data.status,
+                        title: data.mensaje,
+                        showConfirmButton: false,
+                        timer: 1500 
+                            }).then(()=>{
+                                if(data.status == "success"){
+                                location.reload();
+                                }
+                                
+                    });
+                    })
+                    .catch(error => {
+                        console.log(error);
+                        alert('Error al ocupar espacio');
+                    });
+                }
+            }
+            else{
+                new bootstrap.Modal(ocuparEspacioModal).show();
+            }
+        });
+        selectPlacaButton.addEventListener("click",()=>{
+            ocuparEspacioClienteNormal.classList.remove("d-none");
+            ocuparEspacioContratista.classList.add("d-none");
+            searchContainer.classList.add("d-none");
+            selectContratoButton.classList.remove("btn-secondary");
+            selectContratoButton.classList.add("btn-success");
+            selectPlacaButton.classList.remove("btn-success");
+            selectPlacaButton.classList.add("btn-secondary");
+            datatableContainer.innerHTML = "";
+        });
+
+        selectContratoButton.addEventListener("click",()=>{
+            ocuparEspacioContratista.classList.remove("d-none");
+            ocuparEspacioClienteNormal.classList.add("d-none");
+            searchContainer.classList.remove("d-none");
+            selectPlacaButton.classList.remove("btn-secondary");
+            selectPlacaButton.classList.add("btn-success");
+            selectContratoButton.classList.remove("btn-success");
+            selectContratoButton.classList.add("btn-success");
+        });
+
     </script>
 </body>
 

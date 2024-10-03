@@ -1,3 +1,6 @@
+import { Op } from "sequelize";
+import contrato from "../models/contrato.js";
+import Detalle_Cliente from "../models/detalle_cliente.js";
 import Espacio from "../models/espacio.js";
 import parqueadero from "../models/parqueadero.js";
 import reserva from "../models/reserva.js";
@@ -138,6 +141,52 @@ export const cambiarEstado = async (req, res, next) => {
         mensaje: "Registro no encontrado",
       });
     }
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const obtenerTipoEspacio = async (req, res, next) => {
+  try {
+    const id_espacio = req.query.id_espacio;
+    const id_parqueadero = req.query.id_parqueadero;
+
+    const espacio = await Espacio.findOne({
+      where: {
+        [Op.and]: {
+          estado: "Ocupado",
+          id: id_espacio,
+          id_parqueadero,
+        },
+      },
+    });
+
+    if (!espacio) {
+      res.status(400).send({
+        status: "error",
+        mensaje: "No se encontró el espacio",
+      });
+    }
+
+    const Contrato = await contrato.findOne({
+      where: { [Op.and]: { id_espacio: espacio.id, estado: 1 } },
+    });
+    const cliente = await Detalle_Cliente.findOne({
+      where: { [Op.and]: { id_espacio: espacio.id, hora_salida: null } },
+    });
+    if (!Contrato && !cliente) {
+      res.status(400).send({
+        status: "error",
+        mensaje: "No se encontró el contrato o cliente a facturar",
+      });
+    }
+    let tipo = 0;
+    if (Contrato) {
+      tipo = 1;
+    } else if (cliente) {
+      tipo = 2;
+    }
+    res.status(200).send({ status: "success", tipo });
   } catch (error) {
     next(error);
   }

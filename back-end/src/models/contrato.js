@@ -19,6 +19,10 @@ export default db.define(
       type: DataTypes.DATE,
       allowNull: false,
     },
+    valor_contrato: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: false,
+    },
     id_contratista: {
       type: DataTypes.INTEGER,
       references: {
