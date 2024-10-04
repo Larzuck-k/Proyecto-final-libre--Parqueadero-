@@ -3,7 +3,7 @@ import db from "./db.js";
 import Parqueadero from "./parqueadero.js";
 
 export default db.define(
-  "Espacio",
+  "espacio",
   {
     id: {
       type: DataTypes.UUID,
@@ -27,7 +27,7 @@ export default db.define(
     },
   },
   {
-    tableName: "Espacio",
+    tableName: "espacio",
     timestamps: false,
   }
 );

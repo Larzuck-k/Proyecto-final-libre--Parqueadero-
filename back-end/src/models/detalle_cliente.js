@@ -4,7 +4,7 @@ import espacio from "./espacio.js";
 import Cliente from "./cliente.js";
 
 const Detalle_Cliente = db.define(
-  "Detalle_Cliente",
+  "detalle_cliente",
   {
     id: {
       type: DataTypes.INTEGER,
@@ -39,7 +39,7 @@ const Detalle_Cliente = db.define(
     },
   },
   {
-    tableName: "Detalle_Cliente",
+    tableName: "detalle_cliente",
     timestamps: false,
   }
 );

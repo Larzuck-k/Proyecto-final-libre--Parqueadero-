@@ -3,7 +3,7 @@ import db from "./db.js";
 import Usuario from "./usuario.js";
 
 const Contratista = db.define(
-  "Contratista",
+  "contratista",
   {
     id: {
       type: DataTypes.INTEGER,
@@ -40,7 +40,7 @@ const Contratista = db.define(
     },
   },
   {
-    tableName: "Contratista",
+    tableName: "contratista",
     timestamps: false,
   }
 );

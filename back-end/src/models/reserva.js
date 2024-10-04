@@ -3,7 +3,7 @@ import db from "./db.js";
 import Espacio from "./espacio.js";
 
 export default db.define(
-  "Reserva",
+  "reserva",
   {
     id: {
       type: DataTypes.INTEGER,
@@ -31,7 +31,7 @@ export default db.define(
     },
   },
   {
-    tableName: "Reserva",
+    tableName: "reserva",
     timestamps: false,
   }
 );

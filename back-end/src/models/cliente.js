@@ -2,7 +2,7 @@ import { DataTypes } from "sequelize";
 import db from "./db.js";
 
 const Cliente = db.define(
-  "Cliente",
+  "cliente",
   {
     id: {
       type: DataTypes.INTEGER,
@@ -14,7 +14,7 @@ const Cliente = db.define(
     },
   },
   {
-    tableName: "Cliente",
+    tableName: "cliente",
     timestamps: false,
   }
 );

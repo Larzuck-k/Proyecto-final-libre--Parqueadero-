@@ -4,7 +4,7 @@ import Espacio from "./espacio.js";
 import Contratista from "./contratista.js";
 
 export default db.define(
-  "Contrato",
+  "contrato",
   {
     id: {
       type: DataTypes.INTEGER,
@@ -43,7 +43,7 @@ export default db.define(
     },
   },
   {
-    tableName: "Contrato",
+    tableName: "contrato",
     timestamps: false,
   }
 );

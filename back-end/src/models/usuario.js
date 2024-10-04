@@ -3,7 +3,7 @@ import db from "./db.js";
 import Rol from "./rol.js";
 
 export default db.define(
-  "Users",
+  "users",
   {
     id: {
       type: DataTypes.INTEGER,
@@ -39,7 +39,7 @@ export default db.define(
         model: Rol,
         key: "id",
       },
-      allowNull:false,
+      allowNull: false,
       defaultValue: 2,
     },
     estado: {
@@ -60,4 +60,3 @@ export default db.define(
     timestamps: false,
   }
 );
-

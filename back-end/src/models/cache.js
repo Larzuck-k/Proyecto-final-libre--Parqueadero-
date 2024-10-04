@@ -2,7 +2,7 @@ import { DataTypes } from "sequelize";
 import db from "./db.js";
 
 const Cache = db.define(
-  "Cache",
+  "cache",
   {
     key: {
       type: DataTypes.STRING(255),
@@ -17,7 +17,7 @@ const Cache = db.define(
     },
   },
   {
-    tableName: "Cache",
+    tableName: "cache",
     timestamps: false,
   }
 );

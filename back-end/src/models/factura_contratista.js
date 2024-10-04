@@ -4,7 +4,7 @@ import Contrato from "./contrato.js";
 import Contratista from "./contratista.js";
 
 const Factura_Contratista = db.define(
-  "Factura_Contratista",
+  "factura_contratista",
   {
     id: {
       type: DataTypes.UUID,
@@ -37,7 +37,7 @@ const Factura_Contratista = db.define(
     },
   },
   {
-    tableName: "Factura_Contratista",
+    tableName: "factura_contratista",
     timestamps: false,
   }
 );

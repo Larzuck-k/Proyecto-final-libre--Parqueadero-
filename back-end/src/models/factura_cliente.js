@@ -3,7 +3,7 @@ import db from "./db.js";
 import Detalle_Cliente from "./detalle_cliente.js";
 
 export default db.define(
-  "factura_contratista",
+  "factura_cliente",
   {
     id: {
       type: DataTypes.UUID,
@@ -32,7 +32,7 @@ export default db.define(
     },
   },
   {
-    tableName: "Factura_Cliente",
+    tableName: "factura_cliente",
     timestamps: false,
   }
 );
